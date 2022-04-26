@@ -1,0 +1,17 @@
+Scene: Untitled
+Actors:
+  - Actor: 12345
+    TagComponent:
+      Tag: New Actor
+    TransformComponent:
+      Position: [-920, 1031]
+      Rotation: -28.3999996
+      Scale: [1, 1]
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRot: false
+    SpriteRendererComponent:
+      Texture: G:\Libraries\Pictures\beethoicon.png
+      Tint: 738132223
+      Visible: true

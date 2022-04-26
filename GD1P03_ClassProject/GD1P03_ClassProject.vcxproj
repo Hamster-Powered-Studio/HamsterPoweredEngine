@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{285a9f5b-f200-4994-af79-8588ddbc0b2f}</ProjectGuid>
+    <RootNamespace>GD1P03ClassProject</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="EditorColorPicker.cpp" />
+    <ClCompile Include="EditorColorScheme.cpp" />
+    <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="Global.cpp" />
+    <ClCompile Include="ImGuiElement.cpp" />
+    <ClCompile Include="imgui\imgui-SFML.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\binary.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\contrib\graphbuilder.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\contrib\graphbuilderadapter.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\convert.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\depthguard.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\directives.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\emit.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\emitfromevents.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\emitter.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\emitterstate.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\emitterutils.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\exceptions.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\exp.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\memory.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\node.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\nodebuilder.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\nodeevents.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\node_data.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\null.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\ostream_wrapper.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\parse.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\parser.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\regex_yaml.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\scanner.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\scanscalar.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\scantag.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\scantoken.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\simplekey.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\singledocparser.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\stream.cpp" />
+    <ClCompile Include="include\yaml-cpp-code\tag.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneSerializer.cpp" />
+    <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="UIActorDetails.cpp" />
+    <ClCompile Include="UIHierarchy.cpp" />
+    <ClCompile Include="UIViewport.cpp" />
+    <ClCompile Include="WindowsPlatformUtils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="Components.h" />
+    <ClInclude Include="EditorColorPicker.h" />
+    <ClInclude Include="EditorColorScheme.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="ImGuiElement.h" />
+    <ClInclude Include="imgui\imconfig-SFML.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui-SFML.h" />
+    <ClInclude Include="imgui\imgui-SFML_export.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imgui_stdlib.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="include\entt\entt.hpp" />
+    <ClInclude Include="include\yaml-cpp-code\collectionstack.h" />
+    <ClInclude Include="include\yaml-cpp-code\contrib\graphbuilderadapter.h" />
+    <ClInclude Include="include\yaml-cpp-code\directives.h" />
+    <ClInclude Include="include\yaml-cpp-code\emitterstate.h" />
+    <ClInclude Include="include\yaml-cpp-code\emitterutils.h" />
+    <ClInclude Include="include\yaml-cpp-code\exp.h" />
+    <ClInclude Include="include\yaml-cpp-code\indentation.h" />
+    <ClInclude Include="include\yaml-cpp-code\nodebuilder.h" />
+    <ClInclude Include="include\yaml-cpp-code\nodeevents.h" />
+    <ClInclude Include="include\yaml-cpp-code\ptr_vector.h" />
+    <ClInclude Include="include\yaml-cpp-code\regeximpl.h" />
+    <ClInclude Include="include\yaml-cpp-code\regex_yaml.h" />
+    <ClInclude Include="include\yaml-cpp-code\scanner.h" />
+    <ClInclude Include="include\yaml-cpp-code\scanscalar.h" />
+    <ClInclude Include="include\yaml-cpp-code\scantag.h" />
+    <ClInclude Include="include\yaml-cpp-code\setting.h" />
+    <ClInclude Include="include\yaml-cpp-code\singledocparser.h" />
+    <ClInclude Include="include\yaml-cpp-code\stream.h" />
+    <ClInclude Include="include\yaml-cpp-code\streamcharsource.h" />
+    <ClInclude Include="include\yaml-cpp-code\stringsource.h" />
+    <ClInclude Include="include\yaml-cpp-code\tag.h" />
+    <ClInclude Include="include\yaml-cpp-code\token.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="PlatformUtils.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneSerializer.h" />
+    <ClInclude Include="TileMap.h" />
+    <ClInclude Include="UIActorDetails.h" />
+    <ClInclude Include="UIHierarchy.h" />
+    <ClInclude Include="UIViewport.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

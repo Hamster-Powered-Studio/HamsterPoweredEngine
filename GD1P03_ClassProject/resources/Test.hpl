@@ -1,0 +1,11 @@
+Scene: Untitled
+Entities:
+  - Actor: 12345
+    TagComponent:
+      Tag: Teetho
+  - Actor: 12345
+    TagComponent:
+      Tag: Among Us Drip
+  - Actor: 12345
+    TagComponent:
+      Tag: Square
