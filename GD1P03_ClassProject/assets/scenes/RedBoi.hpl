@@ -1,0 +1,52 @@
+Scene: Untitled
+Actors:
+  - Actor: 12345
+    TagComponent:
+      Tag: Cam
+    TransformComponent:
+      Transform:
+        Position:
+          x: 109
+          y: -29
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRotation: false
+    InputComponent:
+      Active: true
+  - Actor: 12345
+    TagComponent:
+      Tag: BlueTeetho
+    TransformComponent:
+      Transform:
+        Position:
+          x: 170
+          y: -124
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    SpriteRendererComponent:
+      Texture: assets/sprites/beethoicon.png
+      Tint: 392533247
+      Visible: true
+  - Actor: 12345
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Transform:
+        Position:
+          x: -126
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    SpriteRendererComponent:
+      Texture: assets/sprites/DefaultSprite.png
+      Tint: 3928961023
+      Visible: true

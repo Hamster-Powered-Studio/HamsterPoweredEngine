@@ -1,6 +1,6 @@
 #include <iostream>
-#include "GameWindow.h"
-#include "Global.h"
+#include "Source/Engine/GameWindow.h"
+#include "Source/Engine/Global.h"
 
 
 

@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Projects\Dev\SFML\2DFramework\GD1P03_ClassProject\GD1P03-Project\GD1P03_ClassProject\Source;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -74,7 +74,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Projects\Dev\SFML\2DFramework\GD1P03_ClassProject\GD1P03-Project\GD1P03_ClassProject\Source;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -88,20 +88,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Character.cpp" />
-    <ClCompile Include="EditorColorPicker.cpp" />
-    <ClCompile Include="EditorColorScheme.cpp" />
-    <ClCompile Include="GameWindow.cpp" />
-    <ClCompile Include="Global.cpp" />
-    <ClCompile Include="ImGuiElement.cpp" />
-    <ClCompile Include="imgui\imgui-SFML.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_stdlib.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\imgui\imgui-SFML.cpp" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="include\imgui\imgui_tables.cpp" />
+    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="include\yaml-cpp-code\binary.cpp" />
     <ClCompile Include="include\yaml-cpp-code\contrib\graphbuilder.cpp" />
     <ClCompile Include="include\yaml-cpp-code\contrib\graphbuilderadapter.cpp" />
@@ -133,38 +125,23 @@
     <ClCompile Include="include\yaml-cpp-code\singledocparser.cpp" />
     <ClCompile Include="include\yaml-cpp-code\stream.cpp" />
     <ClCompile Include="include\yaml-cpp-code\tag.cpp" />
-    <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneSerializer.cpp" />
-    <ClCompile Include="TileMap.cpp" />
-    <ClCompile Include="UIActorDetails.cpp" />
-    <ClCompile Include="UIHierarchy.cpp" />
-    <ClCompile Include="UIViewport.cpp" />
-    <ClCompile Include="WindowsPlatformUtils.cpp" />
+    <ClCompile Include="Source\Engine\Actor.cpp" />
+    <ClCompile Include="Source\Engine\GameWindow.cpp" />
+    <ClCompile Include="Source\Engine\Global.cpp" />
+    <ClCompile Include="Source\Engine\Renderer.cpp" />
+    <ClCompile Include="Source\Engine\Scene.cpp" />
+    <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
+    <ClCompile Include="Source\Engine\TileMap.cpp" />
+    <ClCompile Include="Source\UI\ImGuiElement.cpp" />
+    <ClCompile Include="Source\UI\UIActorDetails.cpp" />
+    <ClCompile Include="Source\UI\UIHierarchy.cpp" />
+    <ClCompile Include="Source\UI\UIViewport.cpp" />
+    <ClCompile Include="Source\Utils\EditorColorPicker.cpp" />
+    <ClCompile Include="Source\Utils\EditorColorScheme.cpp" />
+    <ClCompile Include="Source\Utils\WindowsPlatformUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="Components.h" />
-    <ClInclude Include="EditorColorPicker.h" />
-    <ClInclude Include="EditorColorScheme.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="GameWindow.h" />
-    <ClInclude Include="Global.h" />
-    <ClInclude Include="ImGuiElement.h" />
-    <ClInclude Include="imgui\imconfig-SFML.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui-SFML.h" />
-    <ClInclude Include="imgui\imgui-SFML_export.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imgui_stdlib.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="include\entt\entt.hpp" />
     <ClInclude Include="include\yaml-cpp-code\collectionstack.h" />
     <ClInclude Include="include\yaml-cpp-code\contrib\graphbuilderadapter.h" />
@@ -188,15 +165,22 @@
     <ClInclude Include="include\yaml-cpp-code\stringsource.h" />
     <ClInclude Include="include\yaml-cpp-code\tag.h" />
     <ClInclude Include="include\yaml-cpp-code\token.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="PlatformUtils.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneSerializer.h" />
-    <ClInclude Include="TileMap.h" />
-    <ClInclude Include="UIActorDetails.h" />
-    <ClInclude Include="UIHierarchy.h" />
-    <ClInclude Include="UIViewport.h" />
+    <ClInclude Include="Source\Components\Components.h" />
+    <ClInclude Include="Source\Engine\Actor.h" />
+    <ClInclude Include="Source\Engine\Engine.h" />
+    <ClInclude Include="Source\Engine\GameWindow.h" />
+    <ClInclude Include="Source\Engine\Global.h" />
+    <ClInclude Include="Source\Engine\Renderer.h" />
+    <ClInclude Include="Source\Engine\Scene.h" />
+    <ClInclude Include="Source\Engine\SceneSerializer.h" />
+    <ClInclude Include="Source\Engine\TileMap.h" />
+    <ClInclude Include="Source\UI\ImGuiElement.h" />
+    <ClInclude Include="Source\UI\UIActorDetails.h" />
+    <ClInclude Include="Source\UI\UIHierarchy.h" />
+    <ClInclude Include="Source\UI\UIViewport.h" />
+    <ClInclude Include="Source\Utils\EditorColorPicker.h" />
+    <ClInclude Include="Source\Utils\EditorColorScheme.h" />
+    <ClInclude Include="Source\Utils\PlatformUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
