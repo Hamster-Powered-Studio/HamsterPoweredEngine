@@ -1,4 +1,5 @@
-# GD1P03-Project
-GD1P03 class project for practical work. 
+#Hamster Powered Engine
+A small, SFML powered game toolkit.
 
-The content from github has been pulled.
+Run in Debug mode for editor layer.
+Run in Release for standalone version of your game.
