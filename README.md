@@ -1,5 +1,7 @@
-#Hamster Powered Engine
+# Hamster Powered Engine
 A small, SFML powered game toolkit.
 
-Run in Debug mode for editor layer.
+<p>
+Run in Debug mode for editor layer. <br>
 Run in Release for standalone version of your game.
+</p>
