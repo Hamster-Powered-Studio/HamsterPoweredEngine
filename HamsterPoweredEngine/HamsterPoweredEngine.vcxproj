@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Projects\Dev\SFML\2DFramework\GD1P03_ClassProject\GD1P03-Project\GD1P03_ClassProject\Source;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -74,7 +74,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Projects\Dev\SFML\2DFramework\GD1P03_ClassProject\GD1P03-Project\GD1P03_ClassProject\Source;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
