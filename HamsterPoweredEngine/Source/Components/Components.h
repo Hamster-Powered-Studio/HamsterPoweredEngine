@@ -20,7 +20,6 @@ struct Transform2D {
 struct TransformComponent
 {
 	Transform2D Transform;
-	
 	TransformComponent() = default;
 	TransformComponent(const TransformComponent&) = default;
 	TransformComponent(const Transform2D transform) : Transform(transform) {}
@@ -33,9 +32,9 @@ struct SpriteRendererComponent
 {
 	sf::Sprite Sprite;
 	sf::Texture Texture;
-	
 	std::string Path = "assets/sprites/DefaultSprite.png";
 	sf::Color Tint = sf::Color::White;
+	float ZOrder = 0;
 	bool Visible = true;
 
 	SpriteRendererComponent()
@@ -53,6 +52,16 @@ struct SpriteRendererComponent
 		Sprite.setTexture(Texture, true);
 	}
 
+	//Overload the < operator.
+	bool operator< (const SpriteRendererComponent& Spr1)
+	{
+		return ZOrder > Spr1.ZOrder;
+	}
+	//Overload the > operator.
+	bool operator> (const SpriteRendererComponent& Spr1)
+	{
+		return ZOrder < Spr1.ZOrder;
+	}
 };
 
 struct TagComponent
@@ -100,6 +109,7 @@ struct TileMapComponent
 	int height = 50;
 	int SelectedTile = 0;
 	int MaxTilesX = 0;
+	float ZOrder = 0;
 	std::vector<int> Layout;
 
 	TileMapComponent()
@@ -108,6 +118,17 @@ struct TileMapComponent
 	}
 	TileMapComponent(const TileMapComponent&) = default;
 
+	//Overload the < operator.
+	bool operator< (const TileMapComponent &Spr2)
+	{
+		return ZOrder > Spr2.ZOrder;
+	}
+	//Overload the > operator.
+	bool operator> (const TileMapComponent &Spr2)
+	{
+		return ZOrder < Spr2.ZOrder;
+	}
+	
 	void Load()
 	{
 		Texture.loadFromFile(Path);
@@ -177,7 +198,8 @@ namespace meta
 		return members(
 			member("Texture", &SpriteRendererComponent::Path),
 			member("Tint", &SpriteRendererComponent::Tint),
-			member("Visible", &SpriteRendererComponent::Visible)
+			member("Visible", &SpriteRendererComponent::Visible),
+			member("ZOrder", &SpriteRendererComponent::ZOrder)
 		);
 	}
 
@@ -209,7 +231,8 @@ namespace meta
 			member("TileWidth", &TileMapComponent::tileWidth),
 			member("TileHeight", &TileMapComponent::tileHeight),
 			member("Width", &TileMapComponent::width),
-			member("Height", &TileMapComponent::height)
+			member("Height", &TileMapComponent::height),
+			member("ZOrder", &TileMapComponent::ZOrder)
 		);
 	}
 }

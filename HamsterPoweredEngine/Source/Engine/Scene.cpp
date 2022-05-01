@@ -1,4 +1,7 @@
 #include "Scene.h"
+
+#include <queue>
+
 #include "Engine.h"
 #include "Components/Components.h"
 
@@ -12,6 +15,23 @@ Scene::Scene()
 Scene::~Scene()
 {
 }
+
+struct PQElement
+{
+	sf::Drawable* elem;
+	float priority;
+
+	//Overload the < operator.
+	bool operator< (const PQElement &other) const
+	{
+		return priority > other.priority;
+	}
+	//Overload the > operator.
+	bool operator> (const PQElement &other) const
+	{
+		return priority < other.priority;
+	}
+};
 
 void Scene::Update(sf::Time deltaTime)
 {
@@ -73,7 +93,7 @@ void Scene::Update(sf::Time deltaTime)
 
 	if (mainCamera)
 	{
-		
+		std::priority_queue<PQElement> RenderQueue;
 		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto actor : group)
 		{
@@ -83,7 +103,13 @@ void Scene::Update(sf::Time deltaTime)
 			sprite.Sprite.setColor(sprite.Tint);
 
 			if (sprite.Visible)
-			Renderer::Draw(sprite.Sprite, mainCamera);
+			{
+				PQElement elem{};
+				elem.elem = &sprite.Sprite;
+				elem.priority = sprite.ZOrder;
+				RenderQueue.push(elem);
+			}
+			
 		}
 		
 		auto maps = Registry.view<TileMapComponent, TransformComponent>();
@@ -91,7 +117,16 @@ void Scene::Update(sf::Time deltaTime)
 		{
 			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
 			tm.map.setPosition(transform.Transform.Pos);
-			Renderer::Draw(tm.map, mainCamera);
+			PQElement element{};
+			element.elem = &tm.map;
+			element.priority = tm.ZOrder;
+			RenderQueue.push(element);
+		}
+
+	while (!RenderQueue.empty())
+		{
+			Renderer::Draw(*RenderQueue.top().elem, mainCamera);
+			RenderQueue.pop();
 		}
 	}
 	

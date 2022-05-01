@@ -221,6 +221,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 				sprite.Tint = spriteComponent["Tint"].as<sf::Color>();
 				sprite.Texture.loadFromFile(sprite.Path);
 				sprite.Sprite.setTexture(sprite.Texture, true);
+				if(spriteComponent["ZOrder"]) sprite.ZOrder = spriteComponent["ZOrder"].as<float>();
 			}
 
 			auto inputComponent = actor["InputComponent"];
@@ -240,6 +241,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 				input.Path = tmComponent["TexturePath"].as<std::string>();
 				input.tileWidth = tmComponent["TileWidth"].as<int>();
 				input.tileHeight = tmComponent["TileHeight"].as<int>();
+				if(tmComponent["ZOrder"]) input.ZOrder = tmComponent["ZOrder"].as<float>();
 				input.Load();
 			}
 		}

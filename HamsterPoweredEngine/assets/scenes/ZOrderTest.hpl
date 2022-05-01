@@ -1,0 +1,57 @@
+Scene: Untitled
+Actors:
+  - Actor: 12345
+    TagComponent:
+      Tag: Blu
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+      ZDepth: 0
+    SpriteRendererComponent:
+      Texture: assets/sprites/DefaultSprite.png
+      Tint: 4718591
+      Visible: true
+      ZOrder: -15
+  - Actor: 12345
+    TagComponent:
+      Tag: Red
+    TransformComponent:
+      Transform:
+        Position:
+          x: 47
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+      ZDepth: 0
+    SpriteRendererComponent:
+      Texture: assets/sprites/DefaultSprite.png
+      Tint: 4278190335
+      Visible: true
+      ZOrder: 5
+  - Actor: 12345
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Transform:
+        Position:
+          x: -5
+          y: 0
+        Rotation: 11.3000069
+        Scale:
+          x: 1
+          y: 1
+      ZDepth: 0
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRotation: false
+    InputComponent:
+      Active: true

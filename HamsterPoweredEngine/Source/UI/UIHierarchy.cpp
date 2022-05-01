@@ -286,7 +286,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!m_SelectionContext.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { m_SelectionContext.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
-
+        
         Space();
     }
 
@@ -307,6 +307,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
         DrawComponent<SpriteRendererComponent>("Sprite Renderer", actor, [](auto& component)
             {
                 std::string buf;
+                ImGui::DragFloat("Z Order", &component.ZOrder);
                 ImGui::Checkbox("Visible", &component.Visible);
                 ImGui::InputText("Path", &component.Path);
                 if (ImGui::Button("Load Texture"))
@@ -342,6 +343,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
         {
             int* size[] = {&component.width, &component.height};
             int* tileSize[] = {&component.tileWidth, &component.tileHeight};
+            ImGui::DragFloat("Z Order", &component.ZOrder);
             if(ImGui::DragInt2("Size", *size))
             {
                 component.Load();
