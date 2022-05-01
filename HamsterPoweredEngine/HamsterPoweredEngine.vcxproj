@@ -132,7 +132,6 @@
     <ClCompile Include="Source\Engine\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Scene.cpp" />
     <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
-    <ClCompile Include="Source\Engine\TileMap.cpp" />
     <ClCompile Include="Source\UI\ImGuiElement.cpp" />
     <ClCompile Include="Source\UI\UIActorDetails.cpp" />
     <ClCompile Include="Source\UI\UIHierarchy.cpp" />
@@ -173,7 +172,6 @@
     <ClInclude Include="Source\Engine\Renderer.h" />
     <ClInclude Include="Source\Engine\Scene.h" />
     <ClInclude Include="Source\Engine\SceneSerializer.h" />
-    <ClInclude Include="Source\Engine\TileMap.h" />
     <ClInclude Include="Source\UI\ImGuiElement.h" />
     <ClInclude Include="Source\UI\UIActorDetails.h" />
     <ClInclude Include="Source\UI\UIHierarchy.h" />

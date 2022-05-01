@@ -15,14 +15,23 @@ class GameWindow
 
 public:
     sf::RenderWindow* window;
-    GameWindow();
-    ~GameWindow();
 
+    ~GameWindow();
+    GameWindow(GameWindow const&) = delete;
+    GameWindow& operator=(GameWindow const&) = delete;
+
+    static std::shared_ptr<GameWindow> instance()
+    {
+        static std::shared_ptr<GameWindow> s{new GameWindow};
+        return s;
+    }
+    
     void Begin();
     void WindowLoop();
 
     void SetActiveView();
 
+    void NewEmptyScene();
     Scene* currentScene;
 
     ImGuiIO* io;
@@ -44,7 +53,8 @@ public:
     std::vector<ImGuiElement*> UIElements;
 
     UIHierarchy* hier;
-private:
 
-    
+private:
+    //static inline GameWindow* GameWindow::GameWindow_m = nullptr;
+    GameWindow();
 };

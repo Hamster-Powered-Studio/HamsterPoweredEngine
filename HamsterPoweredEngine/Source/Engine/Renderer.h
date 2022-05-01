@@ -16,11 +16,10 @@ public:
 	static void Init();
 
 	static void BeginDraw();
-	static void Draw(sf::Sprite& sprite, CameraComponent* camera);
+	static void Draw(sf::Drawable& sprite, CameraComponent* camera);
 	static void EndDraw();
 	static void Resize(unsigned int width, unsigned int height);
 	
 	static sf::RenderTexture* GetView() { return View; }
-
 };
 

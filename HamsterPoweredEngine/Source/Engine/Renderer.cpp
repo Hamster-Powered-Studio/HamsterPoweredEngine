@@ -19,12 +19,13 @@ Renderer* Renderer::GetInstance()
 }
 
 
+
 void Renderer::BeginDraw()
 {
 	View->clear();
 }
 
-void Renderer::Draw(sf::Sprite& sprite, CameraComponent* camera)
+void Renderer::Draw(sf::Drawable& sprite, CameraComponent* camera)
 {
 	if (camera)
 	{

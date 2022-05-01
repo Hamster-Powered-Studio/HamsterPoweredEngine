@@ -7,6 +7,5 @@ namespace global
     sf::Clock deltaClock;
     sf::Time deltaTime;
     bool isInPlay = NDEBUG;
-    //Level* World;
 
 }

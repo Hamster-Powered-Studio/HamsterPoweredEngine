@@ -86,7 +86,15 @@ void Scene::Update(sf::Time deltaTime)
 			Renderer::Draw(sprite.Sprite, mainCamera);
 		}
 		
+		auto maps = Registry.view<TileMapComponent, TransformComponent>();
+		for (auto actor : maps)
+		{
+			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
+			tm.map.setPosition(transform.Transform.Pos);
+			Renderer::Draw(tm.map, mainCamera);
+		}
 	}
+	
 	
 }
 
@@ -137,4 +145,9 @@ void Scene::OnComponentAdded<InputComponent>(Actor actor, InputComponent& compon
 template<>
 void Scene::OnComponentAdded<SpriteRendererComponent>(Actor actor, SpriteRendererComponent& component)
 {
+}
+
+template<>
+void Scene::OnComponentAdded<TileMapComponent>(Actor actor, TileMapComponent& component)
+{	
 }

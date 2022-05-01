@@ -250,6 +250,12 @@ static void DrawComponent(const std::string& name, Actor actor, UIFunction uiFun
     }
 }
 
+int roundDown(int numToRound, int multiple)
+{
+    if (multiple == 0) return numToRound;
+    return static_cast<int>(std::floor(static_cast<double>(numToRound)/static_cast<double>(multiple))*static_cast<double>(multiple));
+}
+
 void UIHierarchy::DrawComponents(Actor& actor)
 {
     ImGui::Spacing();
@@ -277,6 +283,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!m_SelectionContext.HasComponent<CameraComponent>()) if (ImGui::MenuItem("Camera")) { m_SelectionContext.AddComponent<CameraComponent>(); ImGui::CloseCurrentPopup(); }
             if (!m_SelectionContext.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { m_SelectionContext.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
             if (!m_SelectionContext.HasComponent<InputComponent>()) if (ImGui::MenuItem("Input")) { m_SelectionContext.AddComponent<InputComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!m_SelectionContext.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { m_SelectionContext.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
 
@@ -331,4 +338,55 @@ void UIHierarchy::DrawComponents(Actor& actor)
             ImGui::Checkbox("Active", &component.Active);
         });
 
+    DrawComponent<TileMapComponent>("Tilemap", actor, [](TileMapComponent& component)
+        {
+            int* size[] = {&component.width, &component.height};
+            int* tileSize[] = {&component.tileWidth, &component.tileHeight};
+            if(ImGui::DragInt2("Size", *size))
+            {
+                component.Load();
+            }
+            if(ImGui::DragInt2("Tile Size", *tileSize))
+            {
+                component.Load();
+            }
+
+            ImGui::InputText("SpriteSheet", &component.Path);
+
+            
+            
+            double aspectRatioV = (double)component.Texture.getSize().y / (double)component.Texture.getSize().x;
+            double aspectRatioH = (double)component.Texture.getSize().x / (double)component.Texture.getSize().y;
+        
+            ImVec2 image_pos = ImGui::GetCursorScreenPos();
+            sf::Vector2f prevSize;
+            prevSize.x = ImGui::GetContentRegionAvail().x;
+            prevSize.y = aspectRatioV * ImGui::GetContentRegionAvail().x;
+
+            float scaleFactor = prevSize.y / component.Texture.getSize().y;
+        
+            ImGui::Image(component.Texture, prevSize);
+                if (ImGui::IsItemHovered())
+                {
+                    float MPosX = (ImGui::GetIO().MousePos.x - image_pos.x);
+                    float MPosY = (ImGui::GetIO().MousePos.y - image_pos.y);
+                    ImVec2 itemSize = ImGui::GetItemRectSize();
+       
+                    int TileX = (MPosX / (component.tileWidth * scaleFactor));
+                    int TileY = (MPosY / (component.tileHeight * scaleFactor));
+                    
+                    
+                    ImGui::GetWindowDrawList()->AddRect(ImVec2((image_pos.x + (TileX * component.tileWidth * scaleFactor)), (image_pos.y + (TileY * component.tileHeight * scaleFactor))),
+                                                        ImVec2((image_pos.x + (TileX + 1) * component.tileWidth * scaleFactor), (image_pos.y + (TileY + 1) * component.tileHeight * scaleFactor)),
+                                                        ImColor(255, 255,255, 255));
+                    
+                    if (ImGui::IsItemClicked())
+                    {
+                        std::cout << "X: " << TileX << " Y: " << TileY << std::endl;
+                        int selection;
+                        selection = TileX + (component.MaxTilesX * TileY);
+                        component.SelectedTile = selection;
+                    }
+                }
+        });
 }

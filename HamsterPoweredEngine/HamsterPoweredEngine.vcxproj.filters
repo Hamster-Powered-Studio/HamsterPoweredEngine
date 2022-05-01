@@ -168,9 +168,6 @@
     <ClCompile Include="include\imgui\imgui_draw.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\TileMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -209,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="Source\Utils\WindowsPlatformUtils.cpp">
       <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="TileMap.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -305,9 +305,6 @@
     <ClInclude Include="Source\Engine\Engine.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\TileMap.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\UI\UIHierarchy.h">
       <Filter>Header Files\UI Elements</Filter>
     </ClInclude>
@@ -328,6 +325,12 @@
     </ClInclude>
     <ClInclude Include="Source\Utils\PlatformUtils.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

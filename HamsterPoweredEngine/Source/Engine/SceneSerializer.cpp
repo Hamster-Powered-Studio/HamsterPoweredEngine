@@ -48,6 +48,31 @@ namespace YAML {
 			return true;
 		}
 	};
+/*
+	template<>
+	struct convert<std::vector<int>>
+		{
+			static Node encode(const std::vector<int>& rhs)
+			{
+				Node node;
+				for (auto i : rhs)
+				{
+					node.push_back(i);
+				}
+				return node;
+			}
+
+			static bool decode(const Node& node, std::vector<int>& rhs)
+			{
+				if (node.IsSequence())
+					return false;
+
+				
+				rhs.emplace_back(node.as<int>());
+				return true;
+			}
+		};
+		*/
 }
 
 template<typename T>
@@ -108,7 +133,7 @@ void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 	SerializeComponent<CameraComponent>(out, actor);
 	SerializeComponent<SpriteRendererComponent>(out, actor);
 	SerializeComponent<InputComponent>(out, actor);
-
+	SerializeComponent<TileMapComponent>(out, actor);
 	out << YAML::EndMap;
 	
 }
@@ -203,6 +228,19 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 			{
 				auto& input = deserializedActor.AddComponent<InputComponent>();
 				input.Active = inputComponent["Active"].as<bool>();
+			}
+
+			auto tmComponent = actor["TileMapComponent"];
+			if (tmComponent)
+			{
+				auto& input = deserializedActor.AddComponent<TileMapComponent>();
+				input.Layout = tmComponent["Layout"].as<std::vector<int>>();
+				input.height = tmComponent["Height"].as<int>();
+				input.width = tmComponent["Width"].as<int>();
+				input.Path = tmComponent["TexturePath"].as<std::string>();
+				input.tileWidth = tmComponent["TileWidth"].as<int>();
+				input.tileHeight = tmComponent["TileHeight"].as<int>();
+				input.Load();
 			}
 		}
 	}

@@ -2,9 +2,10 @@
 
 #include <SFML/Main.hpp>
 #include <SFML/Graphics.hpp>
-
+#include <vector>
 #include "MetaStuff/Meta.h"
 #include "Engine/Renderer.h"
+#include "Engine/TileMap.h"
 
 struct Transform2D {
 
@@ -32,6 +33,7 @@ struct SpriteRendererComponent
 {
 	sf::Sprite Sprite;
 	sf::Texture Texture;
+	
 	std::string Path = "assets/sprites/DefaultSprite.png";
 	sf::Color Tint = sf::Color::White;
 	bool Visible = true;
@@ -85,6 +87,52 @@ struct InputComponent
 	InputComponent(bool active) : Active(active) {};
 	InputComponent(const InputComponent&) = default;
 	//InputComponent(const sf::View & camera) : Camera(camera) {}
+};
+
+struct TileMapComponent
+{
+	TileMap map;
+	std::string Path = "assets/sprites/RPGpack_sheet.png";
+	sf::Texture Texture;
+	int tileWidth = 64;
+	int tileHeight = 64;
+	int width = 50;
+	int height = 50;
+	int SelectedTile = 0;
+	int MaxTilesX = 0;
+	std::vector<int> Layout;
+
+	TileMapComponent()
+	{
+		Load();
+	}
+	TileMapComponent(const TileMapComponent&) = default;
+
+	void Load()
+	{
+		Texture.loadFromFile(Path);
+		MaxTilesX = static_cast<int>(std::floor(static_cast<double>(Texture.getSize().x / tileWidth)/static_cast<double>(1))*static_cast<double>(1));
+
+		if (!Layout.empty())
+		{
+			//load layout
+			Layout.resize(width * height);
+		}
+		else
+		{
+			Layout.resize(width * height);
+			for (auto layout : Layout)
+			{
+				layout = 0;
+			}
+		}
+		map.load(Path, sf::Vector2u(tileWidth, tileHeight), Layout, width, height);
+	}
+	void UpdateTexture(int tileToChange)
+	{
+		//map.updateTileTexture(Layout, SelectedTile, tileToChange, sf::Vector2f(tileWidth, tileHeight));
+		map.updateTileTexture(Layout, SelectedTile, tileToChange, sf::Vector2u(tileWidth, tileHeight));
+	}
 };
 
 namespace meta
@@ -149,6 +197,19 @@ namespace meta
 		return members(
 			member("x", &sf::Vector2f::x),
 			member("y", &sf::Vector2f::y)
+		);
+	}
+
+	template<>
+	inline auto registerMembers<TileMapComponent>()
+	{
+		return members(
+			member("TexturePath", &TileMapComponent::Path),
+			member("Layout", &TileMapComponent::Layout),
+			member("TileWidth", &TileMapComponent::tileWidth),
+			member("TileHeight", &TileMapComponent::tileHeight),
+			member("Width", &TileMapComponent::width),
+			member("Height", &TileMapComponent::height)
 		);
 	}
 }

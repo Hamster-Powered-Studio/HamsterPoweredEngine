@@ -19,14 +19,12 @@
 
 GameWindow::GameWindow()
 {
+    //window = ;
     global::Game = this;
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
     ::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
     Renderer::GetInstance();
     Renderer::Resize(window->getSize().x, window->getSize().y);
-
-    
-
     Begin();
 }
 
@@ -40,7 +38,7 @@ GameWindow::~GameWindow()
 void GameWindow::Begin()
 {
     //LoadLevel("test");
-    currentScene = new Scene();
+    NewEmptyScene();
 
     Construct<UIViewport>();
     hier = Construct<UIHierarchy>(*currentScene);
@@ -49,7 +47,7 @@ void GameWindow::Begin()
     //Construct<UIActorDetails>()->SetContext(hier);
 
     std::cout << "Game Window made!";
-
+    
     //ImGui
     ImGui::SFML::Init(*window, true);
     
@@ -170,6 +168,19 @@ void GameWindow::Destroy(ImGuiElement* Element)
 
 }
 
+void GameWindow::NewEmptyScene()
+{
+    delete currentScene;
+    currentScene = new Scene();
+    Actor Cam = currentScene->CreateActor("Camera");
+    Cam.AddComponent<CameraComponent>().SetPrimary(true);
+    Cam.AddComponent<InputComponent>().Active = true;
+    if (hier)
+    {
+        hier->SetContext(*currentScene);
+    }
+}
+
 void GameWindow::RenderUI()
 {
 
@@ -179,12 +190,7 @@ void GameWindow::RenderUI()
     {
         if (ImGui::MenuItem("New", "Ctrl+N"))
         {
-            delete currentScene;
-            currentScene = new Scene();
-            if (hier)
-            {
-                hier->SetContext(*currentScene);
-            }
+            NewEmptyScene();
         }
 
         if (ImGui::MenuItem("Open...", "Ctrl+O")) {

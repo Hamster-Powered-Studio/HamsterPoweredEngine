@@ -1,0 +1,52 @@
+Scene: Untitled
+Actors:
+  - Actor: 12345
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Transform:
+        Position:
+          x: -140
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    SpriteRendererComponent:
+      Texture: assets/sprites/DefaultSprite.png
+      Tint: 4294967295
+      Visible: true
+  - Actor: 12345
+    TagComponent:
+      Tag: BG
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    SpriteRendererComponent:
+      Texture: assets/sprites/beehive.png
+      Tint: 4294967143
+      Visible: true
+  - Actor: 12345
+    TagComponent:
+      Tag: Cam
+    TransformComponent:
+      Transform:
+        Position:
+          x: -142
+          y: -41
+        Rotation: 6.29999638
+        Scale:
+          x: 1
+          y: 1
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRotation: false
+    InputComponent:
+      Active: true
