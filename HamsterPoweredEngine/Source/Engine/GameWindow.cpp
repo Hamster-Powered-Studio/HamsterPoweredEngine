@@ -23,6 +23,12 @@ GameWindow::GameWindow()
     global::Game = this;
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
     ::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
+    auto image = sf::Image{};
+    if (image.loadFromFile("resources/icon.png"))
+    {
+        window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+
+    }
     Renderer::GetInstance();
     Renderer::Resize(window->getSize().x, window->getSize().y);
     Begin();
