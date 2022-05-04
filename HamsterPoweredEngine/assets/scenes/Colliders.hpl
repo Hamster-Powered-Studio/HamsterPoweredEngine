@@ -1,0 +1,44 @@
+Scene: Untitled
+Actors:
+  - Actor: 11061258348866459588
+    IDComponent:
+      ID: 11061258348866459588
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRotation: false
+    InputComponent:
+      Active: true
+    BoxColliderComponent:
+      Active: true
+      Preview: true
+      WrapToSprite: true
+      Collider:
+        Height: 236
+        Width: 116
+        Top: -118
+        Left: -58

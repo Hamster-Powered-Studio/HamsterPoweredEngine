@@ -7,6 +7,7 @@
 #include <iostream>
 #include "MetaStuff/Meta.h"
 #include <algorithm>
+#include <SFML/OpenGL.hpp>
 
 #include "Global.h"
 
@@ -146,6 +147,7 @@ void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 		SerializeComponent<SpriteRendererComponent>(out, &actor);
 		SerializeComponent<InputComponent>(out, &actor);
 		SerializeComponent<TileMapComponent>(out, &actor);
+		SerializeComponent<BoxColliderComponent>(out, &actor);
 		out << YAML::EndMap;
 	}
 	else out << "null";
@@ -290,6 +292,19 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				if(tmComponent["Visible"]) input.Visible = tmComponent["Visible"].as<bool>();
 				if(tmComponent["ZOrder"]) input.ZOrder = tmComponent["ZOrder"].as<float>();
 				input.Load();
+			}
+
+			auto box = actor["BoxColliderComponent"];
+			if (inputComponent)
+			{
+				auto& input = deserializedActor.AddComponent<BoxColliderComponent>();
+				input.Active = box["Active"].as<bool>();
+				input.Preview = box["Preview"].as<bool>();
+				input.WrapToSprite = box["Preview"].as<bool>();
+				input.Collider.height = box["Collider"]["Height"].as<float>();
+				input.Collider.width = box["Collider"]["Width"].as<float>();
+				input.Collider.top = box["Collider"]["Top"].as<float>();
+				input.Collider.left = box["Collider"]["Left"].as<float>();
 			}
 	return deserializedActor;
 }

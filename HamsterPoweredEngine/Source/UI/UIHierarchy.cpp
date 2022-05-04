@@ -362,6 +362,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!m_SelectionContext.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { m_SelectionContext.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
             if (!m_SelectionContext.HasComponent<InputComponent>()) if (ImGui::MenuItem("Input")) { m_SelectionContext.AddComponent<InputComponent>(); ImGui::CloseCurrentPopup(); }
             if (!m_SelectionContext.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { m_SelectionContext.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!m_SelectionContext.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { m_SelectionContext.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
         
@@ -426,6 +427,21 @@ void UIHierarchy::DrawComponents(Actor& actor)
                     component.Tint = newcolor;
                 }
             });
+
+        DrawComponent<BoxColliderComponent>("Box Collider", actor, [](BoxColliderComponent& component)
+        {
+            float boxDims[2] = {component.Collider.width, component.Collider.height};
+            ImGui::Checkbox("Active", &component.Active);
+            ImGui::Checkbox("Preview", &component.Preview);
+            if (!ImGui::Checkbox("Wrap to Sprite", &component.WrapToSprite))
+            {
+                if (ImGui::DragFloat2("Box Dimensions", boxDims))
+                {
+                    component.Collider.width = boxDims[0];
+                    component.Collider.height = boxDims[1];
+                }
+            }
+        });
 
     DrawComponent<CameraComponent>("Camera", actor, [](auto& component)
         {

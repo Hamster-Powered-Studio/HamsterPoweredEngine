@@ -122,11 +122,40 @@ struct CameraComponent
 struct InputComponent
 {
 	bool Active = true;
-
+	
 	InputComponent() = default;
-	InputComponent(bool active) : Active(active) {};
+	InputComponent(bool active) : Active(active) {}
 	InputComponent(const InputComponent&) = default;
 	//InputComponent(const sf::View & camera) : Camera(camera) {}
+};
+
+struct BoxColliderComponent
+{
+	bool Active = true;
+	bool Preview = false;
+	sf::FloatRect Collider = {0, 0, 100, 100};
+	sf::RectangleShape previewRect;
+	bool WrapToSprite = true;
+	bool IsColliding = false;
+	
+	
+	BoxColliderComponent()
+	{
+		previewRect.setFillColor(sf::Color::Transparent);
+		previewRect.setOutlineColor(sf::Color::Red);
+		previewRect.setOutlineThickness(3);
+	}
+	BoxColliderComponent(bool active) : Active(active) {}
+	BoxColliderComponent(const BoxColliderComponent&) = default;
+};
+
+struct MoveComponent
+{
+	sf::Vector2f Move = {0, 0};
+	float velocity = 0;
+	
+	MoveComponent() = default;
+	MoveComponent(const MoveComponent&) = default;
 };
 
 struct TileMapComponent
@@ -254,6 +283,17 @@ namespace meta
 	}
 
 	template<>
+	inline auto registerMembers<sf::FloatRect>()
+	{
+		return members(
+			member("Height", &sf::FloatRect::height),
+			member("Width", &sf::FloatRect::width),
+			member("Top", &sf::FloatRect::top),
+			member("Left", &sf::FloatRect::left)
+		);
+	}
+
+	template<>
 	inline auto registerMembers<sf::Vector2f>()
 	{
 		return members(
@@ -285,6 +325,17 @@ namespace meta
 			member("Children", &RelationshipComponent::children),
 			member("Attached", &RelationshipComponent::Attached),
 			member("Offset", &RelationshipComponent::Offset)
+		);
+	}
+
+	template<>
+	inline auto registerMembers<BoxColliderComponent>()
+	{
+		return members(
+			member("Active", &BoxColliderComponent::Active),
+			member("Preview", &BoxColliderComponent::Preview),
+			member("WrapToSprite", &BoxColliderComponent::WrapToSprite),
+			member("Collider", &BoxColliderComponent::Collider)
 		);
 	}
 }

@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include <imgui-SFML.h>
+#include <imgui_internal.h>
 #include <queue>
 
 #include "Engine.h"
@@ -49,7 +51,7 @@ struct PQElement
 
 void Scene::Update(sf::Time deltaTime)
 {
-
+	std::priority_queue<PQElement> RenderQueue;
 	{
 		auto group = Registry.view<TransformComponent, RelationshipComponent>();
 		for (auto actor : group)
@@ -64,41 +66,108 @@ void Scene::Update(sf::Time deltaTime)
 	}
 	
 	{
-		auto group = Registry.view<TransformComponent, InputComponent>();
+		auto group = Registry.view<MoveComponent, InputComponent>();
 		for (auto actor : group)
 		{
-			const auto& [transform, input] = group.get<TransformComponent, InputComponent>(actor);
-
-			if (input.Active)
+			const auto& [move, input] = group.get<MoveComponent, InputComponent>(actor);
+			bool colliding = false;
+			if (Registry.any_of<BoxColliderComponent>(actor))
 			{
+				colliding = Registry.get<BoxColliderComponent>(actor).IsColliding;
+			}
+			
+			if (input.Active && !colliding)
+			{
+				
 				if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 				{
-					transform.Transform.Pos += {0, -1};
+					move.Move += {0, -1};
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 				{
-					transform.Transform.Pos += {-1, 0};
+					move.Move += {-1, 0};
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 				{
-					transform.Transform.Pos += {0, 1};
+					move.Move += {0, 1};
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 				{
-					transform.Transform.Pos += {1, 0};
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-				{
-					transform.Transform.Rot -= 0.1f;
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-				{
-					transform.Transform.Rot += 0.1f;
+					move.Move += {1, 0};
 				}
 			}
 		}
 	}
 
+	{
+		auto view = Registry.view<BoxColliderComponent, TransformComponent, MoveComponent>();
+		for (auto actor : view)
+		{
+			const auto& [collider, transform, move] = view.get<BoxColliderComponent, TransformComponent, MoveComponent>(actor);
+			if (collider.WrapToSprite)
+			{
+				if (Registry.any_of<SpriteRendererComponent>(actor))
+				{
+					auto& spr = Registry.get<SpriteRendererComponent>(actor);
+					collider.Collider.width = spr.Sprite.getTexture()->getSize().x;
+					collider.Collider.height = spr.Sprite.getTexture()->getSize().y;
+				}
+			}
+			
+			collider.Collider.left = transform.Transform.Pos.x - (collider.Collider.width/2);
+			collider.Collider.top = transform.Transform.Pos.y - (collider.Collider.height/2);
+
+			if (collider.Preview)
+			{
+				collider.previewRect.setSize({collider.Collider.width, collider.Collider.height});
+				collider.previewRect.setPosition(transform.Transform.Pos);
+				collider.previewRect.setOrigin(collider.Collider.width/2, collider.Collider.height/2);
+				PQElement prev;
+				prev.elem = &collider.previewRect;
+				prev.priority = 99999;
+				RenderQueue.emplace(prev);
+			}
+
+			sf::FloatRect futureColliderLR(collider.Collider.left + move.Move.x, collider.Collider.top, collider.Collider.width, collider.Collider.height);
+			sf::FloatRect futureColliderUD(collider.Collider.left, collider.Collider.top + move.Move.y, collider.Collider.width, collider.Collider.height);
+			
+			if (collider.Active)
+			{
+				for (auto otheractor : view)
+				{
+					if(otheractor == actor) continue;
+					const auto& othercollider = view.get<BoxColliderComponent>(otheractor);
+					if (othercollider.Active)
+					{
+						if (futureColliderLR.intersects(othercollider.Collider))
+						{
+							std::cout << "COLLISION";
+							move.Move.x = 0;
+							//collider.IsColliding = true;
+						}
+						if (futureColliderUD.intersects(othercollider.Collider))
+						{
+							move.Move.y = 0;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	{
+		auto view = Registry.view<TransformComponent, MoveComponent>();
+		for (auto actor : view)
+		{
+			const auto& [transform, move] = view.get<TransformComponent, MoveComponent>(actor);
+			{
+				transform.Transform.Pos += move.Move;
+				move.Move = {0, 0};
+			}
+		}
+	}
+	
+	
 	CameraComponent* mainCamera = nullptr;
 	{
 		auto group = Registry.view<TransformComponent, CameraComponent>();
@@ -122,7 +191,7 @@ void Scene::Update(sf::Time deltaTime)
 	
 	if (mainCamera)
 	{
-		std::priority_queue<PQElement> RenderQueue;
+		
 		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto actor : group)
 		{
@@ -177,6 +246,7 @@ Actor Scene::CreateActorWithUUID(HPUUID uuid, const std::string& name)
 	Actor actor = { Registry.create(), this };
 	actor.AddComponent<IDComponent>(uuid);
 	actor.AddComponent<TransformComponent>();
+	actor.AddComponent<MoveComponent>();
 	actor.AddComponent<RelationshipComponent>();
 	auto& tag = actor.AddComponent<TagComponent>();
 	tag.Tag = name.empty() ? "Actor" : name;
@@ -231,5 +301,15 @@ void Scene::OnComponentAdded<TileMapComponent>(Actor actor, TileMapComponent& co
 
 template<>
 void Scene::OnComponentAdded<RelationshipComponent>(Actor actor, RelationshipComponent& component)
+{	
+}
+
+template<>
+void Scene::OnComponentAdded<BoxColliderComponent>(Actor actor, BoxColliderComponent& component)
+{	
+}
+
+template<>
+void Scene::OnComponentAdded<MoveComponent>(Actor actor, MoveComponent& component)
 {	
 }
