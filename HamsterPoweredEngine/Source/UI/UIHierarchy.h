@@ -21,14 +21,15 @@ public:
     int selectedIndex = 0;
 
     
-    friend class UIActorDetails;
+    //friend class UIActorDetails;
 
     std::string label = "Hierarchy";
 
 private:
     friend class GameWindow;
+    friend class UIViewport;
     Scene* m_Context;
-    void DrawActorNode(Actor& actor);
+    void DrawActorNode(Actor actor);
     void DrawComponents(Actor& selection);
     Actor m_SelectionContext;
 

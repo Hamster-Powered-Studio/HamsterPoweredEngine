@@ -22,22 +22,46 @@ void UIHierarchy::OnImGuiRender()
     
     ImGui::Begin(label.c_str(), &open);
     int index = 0;
-
+    
+    if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && ImGui::GetDragDropPayload())
+    {
+        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+        if (payload)
+        {
+            if(payload->IsDataType("HIERARCHY_ACTOR"))
+            {
+                Actor receivedActor = *(Actor*)payload->Data;
+                auto& payloadRelations = receivedActor.GetComponent<RelationshipComponent>();
+                if (payloadRelations.Parent) //if the dragged object has a parent
+                    {
+                    auto& otherParentsChildren = payloadRelations.Parent.GetComponent<RelationshipComponent>().children; //get that parent's children
+                    otherParentsChildren.erase(std::remove(otherParentsChildren.begin(), otherParentsChildren.end(), receivedActor)); // remove itself from that parent's child list
+                    payloadRelations.Parent = {};
+                    }
+            }
+        }
+    }
+    
     if (m_Context)
         {
 
         m_Context->Reg().each([&](auto actorID)
             {
                 Actor actor{ actorID, m_Context };
-                DrawActorNode(actor);
+                auto& relations =  actor.GetComponent<RelationshipComponent>();
+                if (!relations.Parent)
+                    DrawActorNode(actor);
             });
         }
 
+
+    
     if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
     {
         m_SelectionContext = {};
     }
-
+    
+    
     if (ImGui::BeginPopupContextWindow("Create", ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight))
     {
         if (ImGui::MenuItem("Create Actor"))
@@ -45,6 +69,7 @@ void UIHierarchy::OnImGuiRender()
         ImGui::EndPopup();
     }
 
+    
 
     ImGui::End();
 
@@ -58,16 +83,66 @@ void UIHierarchy::OnImGuiRender()
     ImGui::End();
 }
 
-void UIHierarchy::DrawActorNode(Actor& actor)
+bool isEqual(Actor& actor, Actor& actor2){
+    return (actor == actor2);
+}
+
+void UIHierarchy::DrawActorNode(Actor actor)
 {
     auto& tag = actor.GetComponent<TagComponent>().Tag;
-
+    auto& relations =  actor.GetComponent<RelationshipComponent>();
     ImGuiTreeNodeFlags flags = { ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick };
-    if (actor.children.size() == 0) flags |= ImGuiTreeNodeFlags_Leaf;
+    
+    if (relations.children.size() == 0) flags |= ImGuiTreeNodeFlags_Leaf;
     if (m_SelectionContext == actor) flags |= ImGuiTreeNodeFlags_Selected;
 
+    
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)actor, flags, tag.c_str());
 
+    
+    if (ImGui::BeginDragDropSource())
+    {
+        ImGui::SetDragDropPayload("HIERARCHY_ACTOR", &m_SelectionContext, sizeof(Actor));
+        ImGui::EndDragDropSource();
+    }   
+    if (ImGui::BeginDragDropTarget())
+    {
+        const ImGuiPayload* payload =  ImGui::AcceptDragDropPayload("HIERARCHY_ACTOR");
+        if (payload)
+        {
+            Actor receivedActor = *(Actor*)payload->Data;
+
+            if (receivedActor.HasComponent<RelationshipComponent>())
+            {
+                auto& payloadRelations = receivedActor.GetComponent<RelationshipComponent>();
+                if (payloadRelations.Parent) //if the dragged object has a parent
+                {
+                    auto& otherParentsChildren = payloadRelations.Parent.GetComponent<RelationshipComponent>().children; //get that parent's children
+                    otherParentsChildren.erase(std::remove(otherParentsChildren.begin(), otherParentsChildren.end(), receivedActor)); // remove itself from that parent's child list
+                    
+                }
+                if (payloadRelations.Parent != actor)
+                {
+                    if (!std::any_of(relations.children.begin(), relations.children.end(), [&](const Actor& other) {return receivedActor == other;})) // if payload is not already a child
+                        {
+                            relations.children.push_back(receivedActor); //add payload as a child
+                            payloadRelations.Parent = actor;  //set payloads parent to be this
+                        }
+                }
+                else
+                {
+                    payloadRelations.Parent = {};
+                }
+                
+                
+                
+                std::cout << "Done!";
+            }
+
+        }
+        ImGui::EndDragDropTarget();
+    }
+    
 
 
     bool actorDeleted = false;
@@ -88,20 +163,21 @@ void UIHierarchy::DrawActorNode(Actor& actor)
     {
         ImGui::TreePop();
         ImGui::Indent();
-        for (auto child : actor.children)
+        
+        for (auto child : relations.children)
         {
             DrawActorNode(child);
         }
         ImGui::Unindent();
         
     }
-
-    if (actorDeleted)
-    {
-        m_Context->DestroyActor(m_SelectionContext);
-        if (m_SelectionContext == actor)
-            m_SelectionContext = {};
-    }
+        
+        if (actorDeleted)
+        {
+            m_Context->DestroyActor(m_SelectionContext);
+            if (m_SelectionContext == actor)
+                m_SelectionContext = {};
+        }
 }
 
 void Space()
@@ -303,6 +379,28 @@ void UIHierarchy::DrawComponents(Actor& actor)
             DrawVec2Control("Scale", transform.Scale, 1.f, 0.1f);
         });
 
+    if (actor.GetComponent<RelationshipComponent>().Parent)
+    {
+        DrawComponent<RelationshipComponent>("Parent Attachment", actor, [](auto& component)
+        {
+            auto& transform = component.Offset;
+            float* pos[2] = { &transform.Pos.x, &transform.Pos.y };
+            float* scale[2] = { &transform.Scale.x, &transform.Scale.y };
+
+            ImGui::Checkbox("Attach To Parent", &component.Attached);
+            
+            if (component.Attached)
+            {
+                ImGui::Text("Parent Offsets");
+                DrawVec2Control("Rel Position", transform.Pos, 0.f, 1.f);
+                DrawFloatControl("Rel Rotation", transform.Rot, 0.f, 1.f);
+                DrawVec2Control("Rel Scale", transform.Scale, 1.f, 0.1f);
+            }
+
+        });
+    }
+
+
 
         DrawComponent<SpriteRendererComponent>("Sprite Renderer", actor, [](auto& component)
             {
@@ -333,6 +431,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             ImGui::Checkbox("Primary", &component.Primary);
             ImGui::Checkbox("Inherit Rotation", &component.InheritRotation);
         });
+    
 
     DrawComponent<InputComponent>("Input", actor, [](auto& component)
         {
@@ -344,6 +443,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             int* size[] = {&component.width, &component.height};
             int* tileSize[] = {&component.tileWidth, &component.tileHeight};
             ImGui::DragFloat("Z Order", &component.ZOrder);
+            ImGui::Checkbox("Visible", &component.Visible);
             if(ImGui::DragInt2("Size", *size))
             {
                 component.Load();
@@ -390,5 +490,13 @@ void UIHierarchy::DrawComponents(Actor& actor)
                         component.SelectedTile = selection;
                     }
                 }
+        if (ImGui::Button("Fill Tilemap") && component.Visible)
+        {
+            for (int i = 0; i < component.Layout.size(); i++)
+            {
+                component.Layout[i] = component.SelectedTile;
+                component.UpdateTexture(i);
+            }
+        }
         });
 }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <SFML/Main.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "MetaStuff/Meta.h"
-#include "Engine/Renderer.h"
 #include "Engine/TileMap.h"
+#include "Engine/HPUUID.h"
+#include "Engine/Actor.h"
+
 
 struct Transform2D {
 
@@ -15,6 +16,24 @@ struct Transform2D {
 
 	Transform2D() = default;
 	Transform2D(const Transform2D& transform) : Pos(transform.Pos), Rot(transform.Rot), Scale(transform.Scale) {}
+
+	Transform2D operator+ (const Transform2D& other)
+	{
+		Transform2D newTransform;
+		newTransform.Pos = Pos + other.Pos;
+		newTransform.Rot = Rot + other.Rot;
+		newTransform.Scale = {Scale.x * other.Scale.x, Scale.y * other.Scale.y};
+		
+		return newTransform;
+	}
+};
+
+struct IDComponent
+{
+	HPUUID ID;
+	IDComponent() = default;
+	IDComponent(const IDComponent&) = default;
+	IDComponent(const HPUUID& id) : ID(id){}
 };
 
 struct TransformComponent
@@ -67,10 +86,22 @@ struct SpriteRendererComponent
 struct TagComponent
 {
 	std::string Tag;
-
 	TagComponent() = default;
 	TagComponent(const TagComponent&) = default;
 	TagComponent(const std::string& tag) : Tag(tag) {}
+};
+
+struct RelationshipComponent
+{
+	Actor Parent;
+	std::vector<Actor> children = {};
+	HPUUID tempParentUUID = 0;
+	std::vector<uint64_t> tempChildUUIDs;
+	bool Attached = true;
+	Transform2D Offset;
+
+	RelationshipComponent() = default;
+	RelationshipComponent(const RelationshipComponent&) = default;
 };
 
 struct CameraComponent
@@ -110,6 +141,7 @@ struct TileMapComponent
 	int SelectedTile = 0;
 	int MaxTilesX = 0;
 	float ZOrder = 0;
+	bool Visible = true;
 	std::vector<int> Layout;
 
 	TileMapComponent()
@@ -158,6 +190,14 @@ struct TileMapComponent
 
 namespace meta
 {
+	template<>
+	inline auto registerMembers<IDComponent>()
+	{
+		return members(
+			member("ID", &IDComponent::ID)
+		);
+	}
+	
 	template<>
 	inline auto registerMembers<TransformComponent>()
 	{
@@ -232,7 +272,19 @@ namespace meta
 			member("TileHeight", &TileMapComponent::tileHeight),
 			member("Width", &TileMapComponent::width),
 			member("Height", &TileMapComponent::height),
-			member("ZOrder", &TileMapComponent::ZOrder)
+			member("ZOrder", &TileMapComponent::ZOrder),
+			member("Visible", &TileMapComponent::Visible)
+		);
+	}
+
+	template<>
+	inline auto registerMembers<RelationshipComponent>()
+	{
+		return members(
+			member("Parent", &RelationshipComponent::Parent),
+			member("Children", &RelationshipComponent::children),
+			member("Attached", &RelationshipComponent::Attached),
+			member("Offset", &RelationshipComponent::Offset)
 		);
 	}
 }

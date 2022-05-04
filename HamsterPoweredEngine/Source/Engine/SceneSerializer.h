@@ -1,4 +1,6 @@
 #pragma once
+#include <yaml-cpp/node/iterator.h>
+
 #include "Scene.h"
 namespace YAML
 {
@@ -14,9 +16,12 @@ public:
 	void SerializeRuntime(const std::string& filepath);
 
 	bool Deserialize(const std::string& filepath);
+	Actor DeserializeActor(YAML::detail::iterator_value& actor);
 	bool DeserializeRuntime(const std::string& filepath);
+
+	static void SerializeActor(YAML::Emitter& out, Actor actor);
 private:
-	void SerializeActor(YAML::Emitter& out, Actor actor);
+	friend struct Actor;
 	Scene& m_Scene;
 };
 

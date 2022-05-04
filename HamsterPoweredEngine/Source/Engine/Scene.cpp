@@ -4,6 +4,7 @@
 
 #include "Engine.h"
 #include "Components/Components.h"
+#include "Engine/HPUUID.h"
 
 Scene::Scene()
 {
@@ -14,6 +15,19 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+}
+
+Actor Scene::GetByUUID(HPUUID uuid)
+{
+	{
+		auto view = Registry.view<IDComponent>();
+		for(auto& actor : view)
+		{
+			const auto& id = view.get<IDComponent>(actor);
+			if (id.ID == uuid) return Actor(actor, this);
+		}
+		return {};
+	}
 }
 
 struct PQElement
@@ -35,6 +49,20 @@ struct PQElement
 
 void Scene::Update(sf::Time deltaTime)
 {
+
+	{
+		auto group = Registry.view<TransformComponent, RelationshipComponent>();
+		for (auto actor : group)
+		{
+			const auto& [transform, relationship] = group.get<TransformComponent, RelationshipComponent>(actor);
+			if (relationship.Parent && relationship.Attached)
+			{
+				TransformComponent parentTransformComp = relationship.Parent.GetComponent<TransformComponent>();
+				transform.Transform = parentTransformComp.Transform + relationship.Offset;
+			}
+		}
+	}
+	
 	{
 		auto group = Registry.view<TransformComponent, InputComponent>();
 		for (auto actor : group)
@@ -90,7 +118,8 @@ void Scene::Update(sf::Time deltaTime)
 			}
 		}
 	}
-
+	
+	
 	if (mainCamera)
 	{
 		std::priority_queue<PQElement> RenderQueue;
@@ -117,10 +146,14 @@ void Scene::Update(sf::Time deltaTime)
 		{
 			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
 			tm.map.setPosition(transform.Transform.Pos);
-			PQElement element{};
-			element.elem = &tm.map;
-			element.priority = tm.ZOrder;
-			RenderQueue.push(element);
+
+			if (tm.Visible)
+			{
+				PQElement element{};
+				element.elem = &tm.map;
+				element.priority = tm.ZOrder;
+				RenderQueue.push(element);
+			}
 		}
 
 	while (!RenderQueue.empty())
@@ -135,9 +168,16 @@ void Scene::Update(sf::Time deltaTime)
 
 Actor Scene::CreateActor(const std::string& name)
 {
+	return CreateActorWithUUID(HPUUID(), name);
+}
+
+Actor Scene::CreateActorWithUUID(HPUUID uuid, const std::string& name)
+{
 	std::cout << "ActorSpawned!";
 	Actor actor = { Registry.create(), this };
+	actor.AddComponent<IDComponent>(uuid);
 	actor.AddComponent<TransformComponent>();
+	actor.AddComponent<RelationshipComponent>();
 	auto& tag = actor.AddComponent<TagComponent>();
 	tag.Tag = name.empty() ? "Actor" : name;
 	return actor;
@@ -152,9 +192,11 @@ void Scene::DestroyActor(Actor actor)
 template<typename T>
 void Scene::OnComponentAdded(Actor actor, T& component)
 {
-	//std::cout << "WRONG" << std::endl;
-	//static_assert(false);
-	assert(false, "Must specify component type");
+}
+
+template<>
+void Scene::OnComponentAdded<IDComponent>(Actor actor, IDComponent& component)
+{
 }
 
 template<>
@@ -184,5 +226,10 @@ void Scene::OnComponentAdded<SpriteRendererComponent>(Actor actor, SpriteRendere
 
 template<>
 void Scene::OnComponentAdded<TileMapComponent>(Actor actor, TileMapComponent& component)
+{	
+}
+
+template<>
+void Scene::OnComponentAdded<RelationshipComponent>(Actor actor, RelationshipComponent& component)
 {	
 }

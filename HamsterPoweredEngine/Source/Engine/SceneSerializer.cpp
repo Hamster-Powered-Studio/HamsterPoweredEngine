@@ -8,7 +8,10 @@
 #include "MetaStuff/Meta.h"
 #include <algorithm>
 
+#include "Global.h"
+
 namespace YAML {
+
 	template<>
 	struct convert<sf::Vector2f>
 	{
@@ -22,16 +25,29 @@ namespace YAML {
 
 		static bool decode(const Node& node, sf::Vector2f& rhs)
 		{
-			//if (node.IsSequence() || node.size() != 2)
-			//	return false;
-
-			//auto props = node["Actors"]
 			rhs.x = node["x"].as<float>();
 			rhs.y = node["y"].as<float>();
 			return true;
 		}
 	};
 
+		template<>
+	struct convert<HPUUID>
+		{
+			static Node encode(const HPUUID& rhs)
+			{
+				Node node;
+				node.push_back(rhs);
+				return node;
+			}
+
+			static bool decode(const Node& node, HPUUID& rhs)
+			{
+				rhs = node["ID"].as<uint64_t>();
+				return true;
+			}
+		};
+	
 	template<>
 	struct convert<sf::Color>
 	{
@@ -48,31 +64,9 @@ namespace YAML {
 			return true;
 		}
 	};
-/*
-	template<>
-	struct convert<std::vector<int>>
-		{
-			static Node encode(const std::vector<int>& rhs)
-			{
-				Node node;
-				for (auto i : rhs)
-				{
-					node.push_back(i);
-				}
-				return node;
-			}
 
-			static bool decode(const Node& node, std::vector<int>& rhs)
-			{
-				if (node.IsSequence())
-					return false;
 
-				
-				rhs.emplace_back(node.as<int>());
-				return true;
-			}
-		};
-		*/
+
 }
 
 template<typename T>
@@ -80,23 +74,27 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const T& Class)
 {
 	out << YAML::BeginMap;
 	meta::doForAllMembers<T>([&out, &Class](const auto& member)
-		{
-			out << YAML::Key << member.getName() << YAML::Value << member.get(Class);
-		});
+	{
+		out << YAML::Key << member.getName() << YAML::Value << member.get(Class);
+	});
 	out << YAML::EndMap;
 	return out;
 }
 
-//YAML::Emitter& operator<<(YAML::Emitter& out, const sf::Vector2f& v)
-//{
-//	out << YAML::Flow;
-//	out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-//	return out;
-//}
-
-YAML::Emitter& operator<<(YAML::Emitter& out, const sf::Color& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const HPUUID& id)
 {
-	out << v.toInteger();
+	std::ostringstream oss;
+	oss << id;
+	out << oss.str();
+	return out;
+}
+
+YAML::Emitter& operator<<(YAML::Emitter& out, const Actor& actor)
+{
+	std::ostringstream oss;
+	HPUUID id = actor.GetUUID();
+	oss << id;
+	out << oss.str();
 	return out;
 }
 
@@ -110,32 +108,41 @@ static void RemoveWordFromLine(std::string& line, const std::string word)
 }
 
 template<typename T>
-static void SerializeComponent(YAML::Emitter& out, Actor& actor)
+static void SerializeComponent(YAML::Emitter& out, Actor* actor)
 {
-	if (actor.HasComponent<T>())
+	if (actor)
 	{
-		auto& comp = actor.GetComponent<T>();
-		std::string type = typeid(comp).name();
-		RemoveWordFromLine(type, " ");
-		out << YAML::Key << type;
-		out << comp;
+		if (actor->HasComponent<T>())
+		{
+			auto& comp = actor->GetComponent<T>();
+			std::string type = typeid(comp).name();
+			RemoveWordFromLine(type, " ");
+			out << YAML::Key << type;
+			out << comp;
+		}
 	}
 }
 
+
 void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 {
-	out << YAML::BeginMap;
-	out << YAML::Key << "Actor";
-	out << YAML::Key << "12345"; //ActorID
+	if (actor.m_ActorHandle != entt::null)
+	{
+		out << YAML::BeginMap;
 
-	SerializeComponent<TagComponent>(out, actor);
-	SerializeComponent<TransformComponent>(out, actor);
-	SerializeComponent<CameraComponent>(out, actor);
-	SerializeComponent<SpriteRendererComponent>(out, actor);
-	SerializeComponent<InputComponent>(out, actor);
-	SerializeComponent<TileMapComponent>(out, actor);
-	out << YAML::EndMap;
-	
+		out << YAML::Key << "Actor" << YAML::Value << actor.GetUUID();
+
+		SerializeComponent<IDComponent>(out, &actor);
+		SerializeComponent<TagComponent>(out, &actor);
+		SerializeComponent<TransformComponent>(out, &actor);
+		SerializeComponent<RelationshipComponent>(out, &actor);
+		SerializeComponent<CameraComponent>(out, &actor);
+		SerializeComponent<SpriteRendererComponent>(out, &actor);
+		SerializeComponent<InputComponent>(out, &actor);
+		SerializeComponent<TileMapComponent>(out, &actor);
+		out << YAML::EndMap;
+	}
+	else out << "null";
 }
 
 
@@ -183,17 +190,38 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 	auto actors = data["Actors"];
 	if (actors)
 	{
+		std::vector<Actor> actorList;
 		for (auto actor : actors)
 		{
-			uint64_t uuid = actor["Actor"].as<uint64_t>(); //TODO
+			actorList.push_back(DeserializeActor(actor));
+		}
+		for (auto actor : actorList)
+		{
+			auto& rel = actor.GetComponent<RelationshipComponent>();
+			if (rel.tempParentUUID != 0)
+				rel.Parent = global::Game->currentScene->GetByUUID(rel.tempParentUUID);
+			for (auto child : rel.tempChildUUIDs)
+				rel.children.push_back(global::Game->currentScene->GetByUUID(child));
+		}
+	}
+	else std::cout << "No actors";
+	return true;
+}
 
+Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
+{
+	uint64_t uuid = actor["Actor"].as<uint64_t>();
+			
 			std::string name;
 			auto tagComponent = actor["TagComponent"];
 			if (tagComponent)
+			{
 				name = tagComponent["Tag"].as<std::string>();
+			}
+				
 
-			Actor deserializedActor = m_Scene.CreateActor(name);
-
+			Actor deserializedActor = m_Scene.CreateActorWithUUID(uuid, name);
+			
 			auto transformComponent = actor["TransformComponent"];
 			if (transformComponent)
 			{
@@ -201,6 +229,18 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 				tc.Transform.Pos = transformComponent["Transform"]["Position"].as<sf::Vector2f>();
 				tc.Transform.Rot = transformComponent["Transform"]["Rotation"].as<float>();
 				tc.Transform.Scale = transformComponent["Transform"]["Scale"].as<sf::Vector2f>();
+			}
+
+			auto relationshipComponent = actor["RelationshipComponent"];
+			if (relationshipComponent)
+			{
+				auto& input = deserializedActor.GetComponent<RelationshipComponent>();
+				input.tempParentUUID = relationshipComponent["Parent"].as<uint64_t>();
+				input.tempChildUUIDs = relationshipComponent["Children"].as<std::vector<uint64_t>>();
+				input.Attached = relationshipComponent["Attached"].as<bool>();
+				input.Offset.Pos = relationshipComponent["Offset"]["Position"].as<sf::Vector2f>();
+				input.Offset.Rot = relationshipComponent["Offset"]["Rotation"].as<float>();
+				input.Offset.Scale = relationshipComponent["Offset"]["Scale"].as<sf::Vector2f>();
 			}
 
 			auto cameraComponent = actor["CameraComponent"];
@@ -241,13 +281,11 @@ bool SceneSerializer::Deserialize(const std::string& filepath)
 				input.Path = tmComponent["TexturePath"].as<std::string>();
 				input.tileWidth = tmComponent["TileWidth"].as<int>();
 				input.tileHeight = tmComponent["TileHeight"].as<int>();
+				if(tmComponent["Visible"]) input.Visible = tmComponent["Visible"].as<bool>();
 				if(tmComponent["ZOrder"]) input.ZOrder = tmComponent["ZOrder"].as<float>();
 				input.Load();
 			}
-		}
-	}
-	else std::cout << "No actors";
-	return true;
+	return deserializedActor;
 }
 
 bool SceneSerializer::DeserializeRuntime(const std::string& filepath)

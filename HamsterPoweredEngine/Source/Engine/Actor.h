@@ -1,13 +1,15 @@
 ﻿#pragma once
 #include "Scene.h"
 #include "entt.hpp"
+//#include "Components/Components.h"
 
 
-class Actor {
+struct Actor {
 public:
-    Actor() = default;
+    Actor() {}
     Actor(entt::entity handle, Scene* scene);
-    Actor(const Actor& other) = default;
+    Actor(const Actor& other) : m_ActorHandle(other.m_ActorHandle), m_Scene(other.m_Scene) {};
+    //: m_ActorHandle(other.m_ActorHandle), m_Scene(other.m_Scene){}
 
     template<typename T, typename... Args>
     T& AddComponent(Args&&... args)
@@ -20,14 +22,14 @@ public:
     }
 
     template<typename T>
-    T& GetComponent()
+    T& GetComponent() const
     {
         assert(HasComponent<T>(), "Entity does not have component!");
         return m_Scene->Registry.get<T>(m_ActorHandle);
     }
 
     template<typename T>
-    bool HasComponent()
+    bool HasComponent() const
     {
 
         return m_Scene->Registry.any_of<T>(m_ActorHandle);
@@ -39,18 +41,21 @@ public:
     {
         m_Scene->Registry.remove<T>(m_ActorHandle);
     }
+    
 
+    
+    HPUUID GetUUID() const;
+    
     operator bool() const { return m_ActorHandle != entt::null; }
     operator uint32_t() const { return (uint32_t)m_ActorHandle; }
     bool operator==(const Actor& other) const { return m_ActorHandle == other.m_ActorHandle && m_Scene == other.m_Scene; }
     bool operator!=(const Actor& other) const { return !(*this == other); }
     operator entt::entity() const{ return m_ActorHandle; }
 
-    std::list<Actor> children;
+
     entt::entity m_ActorHandle{ entt::null };
+
 private:
-    Actor* parent;
-    
     Scene* m_Scene = nullptr;
 };
 

@@ -1,0 +1,60 @@
+Scene: Untitled
+Actors:
+  - Actor:
+      {}
+    IDComponent:
+      ID:
+        {}
+    TagComponent:
+      Tag: New Actor
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor:
+      {}
+    IDComponent:
+      ID:
+        {}
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    CameraComponent:
+      Zoom: 1
+      Primary: true
+      InheritRotation: false
+    InputComponent:
+      Active: true

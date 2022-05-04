@@ -1,20 +1,77 @@
 Scene: Untitled
 Actors:
-  - Actor: 12345
+  - Actor: 2265192013102526040
     IDComponent:
-      ID: 12345
+      ID: 2265192013102526040
     TagComponent:
-      Tag: Cam
+      Tag: Test2
     TransformComponent:
       Transform:
         Position:
-          x: -241
-          y: 64
-        Rotation: 6.29999638
+          x: 0
+          y: 306
+        Rotation: 14.0000172
         Scale:
           x: 1
           y: 1
     RelationshipComponent:
+      Parent: 13730903460578937133
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 13730903460578937133
+    IDComponent:
+      ID: 13730903460578937133
+    TagComponent:
+      Tag: Test1
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 306
+        Rotation: 14.0000172
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        - 2265192013102526040
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 10224257261540192154
+    IDComponent:
+      ID: 10224257261540192154
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 306
+        Rotation: 14.0000172
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
       Attached: true
       Offset:
         Position:
@@ -30,61 +87,3 @@ Actors:
       InheritRotation: false
     InputComponent:
       Active: true
-  - Actor: 12345
-    IDComponent:
-      ID: 12345
-    TagComponent:
-      Tag: BG
-    TransformComponent:
-      Transform:
-        Position:
-          x: 0
-          y: 0
-        Rotation: 0
-        Scale:
-          x: 1
-          y: 1
-    RelationshipComponent:
-      Attached: true
-      Offset:
-        Position:
-          x: 0
-          y: 0
-        Rotation: 0
-        Scale:
-          x: 1
-          y: 1
-    SpriteRendererComponent:
-      Texture: assets/sprites/beehive.png
-      Tint: 4294967143
-      Visible: true
-      ZOrder: 0
-  - Actor: 12345
-    IDComponent:
-      ID: 12345
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Transform:
-        Position:
-          x: -140
-          y: 0
-        Rotation: 0
-        Scale:
-          x: 1
-          y: 1
-    RelationshipComponent:
-      Attached: true
-      Offset:
-        Position:
-          x: 0
-          y: 0
-        Rotation: 0
-        Scale:
-          x: 1
-          y: 1
-    SpriteRendererComponent:
-      Texture: assets/sprites/DefaultSprite.png
-      Tint: 4294967295
-      Visible: true
-      ZOrder: 0

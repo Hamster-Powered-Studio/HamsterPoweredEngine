@@ -6,7 +6,6 @@
 #include "imgui_stdlib.h"
 #include "Global.h"
 #include "UI/UIViewport.h"
-#include "UI/UIActorDetails.h"
 #include "UI/UIHierarchy.h"
 #include "Engine.h"
 #include <SFML/OpenGL.hpp>
@@ -243,7 +242,7 @@ void GameWindow::RenderUI()
     if (ImGui::BeginMenu("Windows"))
     {
         if (ImGui::MenuItem("Viewport")) { Construct<UIViewport>(); }
-        if (ImGui::MenuItem("Details")) { Construct<UIActorDetails>(); }
+        //if (ImGui::MenuItem("Details")) { Construct<UIActorDetails>(); }
         if (ImGui::MenuItem("Hierarchy")) { Construct<UIHierarchy>(*currentScene); }
         if (ImGui::MenuItem("Content Browser")) {};
         ImGui::EndMenu();

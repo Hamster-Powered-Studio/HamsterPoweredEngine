@@ -3,6 +3,7 @@
 #include "Engine/Renderer.h"
 #include <iostream>
 
+#include "UIHierarchy.h"
 #include "Components/Components.h"
 
 UIViewport::UIViewport()
@@ -44,38 +45,46 @@ void UIViewport::OnImGuiRender()
 		{
 			for (auto actor : maps)
 			{
-				const auto& [transform, tm] = maps.get<TransformComponent, TileMapComponent>(actor);
-
-				//Create a bounding box based on the dimensions of the tilemap
-				sf::Vector2f boundsSize((float)tm.width * (float)tm.tileWidth, (float)tm.height * (float)tm.tileHeight);
-				sf::Vector2f boundsPos(transform.Transform.Pos.x - (boundsSize.x / 2), transform.Transform.Pos.y - (boundsSize.y / 2));
-				sf::FloatRect bounds(boundsPos, boundsSize);
-
-				
-				if(bounds.contains(worldCoords))
+				if (global::Game->hier->m_SelectionContext == actor)
 				{
-					std::cout << "inside";
-					//Create a new view focusing fully on the tilemap, and use it to convert the coordinates to its own space.
-					sf::View MapView(bounds);
-					//sf::Vector2i pos = Renderer::GetView()->mapCoordsToPixel(worldCoords, MapView);
-					sf::Vector2f pos = worldCoords - boundsPos;
-					//pos.y *=2;
-					std::cout << pos.x << " " << pos.y << std::endl;
+					
+					const auto& [transform, tm] = maps.get<TransformComponent, TileMapComponent>(actor);
 
-					int TileX = (pos.x / (tm.tileWidth));
-					int TileY = (pos.y / (tm.tileHeight));
-					std::cout << TileX << " " << TileY << std::endl;
+					//Create a bounding box based on the dimensions of the tilemap
+					sf::Vector2f boundsSize((float)tm.width * (float)tm.tileWidth, (float)tm.height * (float)tm.tileHeight);
+					sf::Vector2f boundsPos(transform.Transform.Pos.x - (boundsSize.x / 2), transform.Transform.Pos.y - (boundsSize.y / 2));
+					sf::FloatRect bounds(boundsPos, boundsSize);
 
-					int tileToChange;
-					tileToChange = TileX + (tm.width * TileY);
-					tm.Layout[tileToChange] = tm.SelectedTile;
-					tm.UpdateTexture(tileToChange);
-					//tm.Load();
+					
+					if(bounds.contains(worldCoords) && tm.Visible)
+					{
+						std::cout << "inside";
+						//Create a new view focusing fully on the tilemap, and use it to convert the coordinates to its own space.
+						sf::View MapView(bounds);
+						//sf::Vector2i pos = Renderer::GetView()->mapCoordsToPixel(worldCoords, MapView);
+						sf::Vector2f pos = worldCoords - boundsPos;
+						//pos.y *=2;
+						std::cout << pos.x << " " << pos.y << std::endl;
+
+						int TileX = (pos.x / (tm.tileWidth));
+						int TileY = (pos.y / (tm.tileHeight));
+						std::cout << TileX << " " << TileY << std::endl;
+
+						int tileToChange;
+						tileToChange = TileX + (tm.width * TileY);
+						tm.Layout[tileToChange] = tm.SelectedTile;
+						tm.UpdateTexture(tileToChange);
+						//tm.Load();
+					}
+					
 				}
 			}
 		}
+
 	}
 
+
+	
 	ImGui::End();
 	if (!open) global::Game->Destroy(this);
 

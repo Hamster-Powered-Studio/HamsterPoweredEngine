@@ -3,6 +3,8 @@
 #include "entt.hpp"
 #include <SFML/System/Clock.hpp>
 
+#include "HPUUID.h"
+
 class Actor;
 
 class Scene
@@ -10,6 +12,7 @@ class Scene
 public:
 	Scene();
 	~Scene();
+	Actor GetByUUID(HPUUID uuid);
 
 	void Update(sf::Time deltaTime);
 
@@ -19,6 +22,7 @@ public:
 	}
 
 	Actor CreateActor(const std::string& name = std::string());
+	Actor CreateActorWithUUID(HPUUID uuid, const std::string& name);
 	void DestroyActor(Actor actor);
 	entt::registry& Reg() { return Registry; }
 

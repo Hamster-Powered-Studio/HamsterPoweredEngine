@@ -132,8 +132,8 @@
     <ClCompile Include="Source\Engine\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Scene.cpp" />
     <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
+    <ClCompile Include="Source\Engine\HPUUID.cpp" />
     <ClCompile Include="Source\UI\ImGuiElement.cpp" />
-    <ClCompile Include="Source\UI\UIActorDetails.cpp" />
     <ClCompile Include="Source\UI\UIHierarchy.cpp" />
     <ClCompile Include="Source\UI\UIViewport.cpp" />
     <ClCompile Include="Source\Utils\EditorColorPicker.cpp" />
@@ -172,8 +172,8 @@
     <ClInclude Include="Source\Engine\Renderer.h" />
     <ClInclude Include="Source\Engine\Scene.h" />
     <ClInclude Include="Source\Engine\SceneSerializer.h" />
+    <ClInclude Include="Source\Engine\HPUUID.h" />
     <ClInclude Include="Source\UI\ImGuiElement.h" />
-    <ClInclude Include="Source\UI\UIActorDetails.h" />
     <ClInclude Include="Source\UI\UIHierarchy.h" />
     <ClInclude Include="Source\UI\UIViewport.h" />
     <ClInclude Include="Source\Utils\EditorColorPicker.h" />
