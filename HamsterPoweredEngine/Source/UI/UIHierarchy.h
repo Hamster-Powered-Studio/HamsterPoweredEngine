@@ -32,6 +32,7 @@ private:
     void DrawActorNode(Actor actor);
     void DrawComponents(Actor& selection);
     Actor m_SelectionContext;
+    bool DragDone = false;
 
 };
 

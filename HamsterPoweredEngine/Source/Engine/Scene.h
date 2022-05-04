@@ -5,7 +5,7 @@
 
 #include "HPUUID.h"
 
-class Actor;
+struct Actor;
 
 class Scene
 {
@@ -33,7 +33,7 @@ private:
 private:
 	entt::registry Registry;
 	
-	friend class Actor;
+	friend struct Actor;
 	friend class SceneSerializer;
 	friend class UIHierarchy;
 };

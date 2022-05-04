@@ -59,7 +59,7 @@ struct SpriteRendererComponent
 	SpriteRendererComponent()
 	{
 		Texture.loadFromFile(Path);
-		Sprite.setOrigin(Texture.getSize().x / 2, Texture.getSize().y / 2);
+		Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
 		Sprite.setTexture(Texture, true);
 	}
 	SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -67,7 +67,7 @@ struct SpriteRendererComponent
 	SpriteRendererComponent(const std::string path) {
 		Texture.loadFromFile(path);
 		Path = path;
-		Sprite.setOrigin(Texture.getSize().x / 2, Texture.getSize().y / 2);
+		Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
 		Sprite.setTexture(Texture, true);
 	}
 

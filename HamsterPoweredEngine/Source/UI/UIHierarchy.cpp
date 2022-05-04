@@ -22,12 +22,26 @@ void UIHierarchy::OnImGuiRender()
     
     ImGui::Begin(label.c_str(), &open);
     int index = 0;
+    DragDone = false;
     
-    if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && ImGui::GetDragDropPayload())
+    if (m_Context)
+        {
+
+        m_Context->Reg().each([&](auto actorID)
+            {
+                Actor actor{ actorID, m_Context };
+                auto& relations =  actor.GetComponent<RelationshipComponent>();
+                if (!relations.Parent)
+                    DrawActorNode(actor);
+            });
+        }
+
+    if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && ImGui::GetDragDropPayload() && !DragDone)
     {
         const ImGuiPayload* payload = ImGui::GetDragDropPayload();
         if (payload)
         {
+            DragDone = true;
             if(payload->IsDataType("HIERARCHY_ACTOR"))
             {
                 Actor receivedActor = *(Actor*)payload->Data;
@@ -42,19 +56,6 @@ void UIHierarchy::OnImGuiRender()
         }
     }
     
-    if (m_Context)
-        {
-
-        m_Context->Reg().each([&](auto actorID)
-            {
-                Actor actor{ actorID, m_Context };
-                auto& relations =  actor.GetComponent<RelationshipComponent>();
-                if (!relations.Parent)
-                    DrawActorNode(actor);
-            });
-        }
-
-
     
     if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
     {
@@ -111,9 +112,10 @@ void UIHierarchy::DrawActorNode(Actor actor)
         if (payload)
         {
             Actor receivedActor = *(Actor*)payload->Data;
-
+            
             if (receivedActor.HasComponent<RelationshipComponent>())
             {
+                DragDone = true;
                 auto& payloadRelations = receivedActor.GetComponent<RelationshipComponent>();
                 if (payloadRelations.Parent) //if the dragged object has a parent
                 {
