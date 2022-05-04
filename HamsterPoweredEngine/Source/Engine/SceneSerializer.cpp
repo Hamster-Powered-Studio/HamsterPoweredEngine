@@ -98,6 +98,12 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const Actor& actor)
 	return out;
 }
 
+YAML::Emitter& operator<<(YAML::Emitter& out, const sf::Color& v)
+{
+	out << v.toInteger();
+	return out;
+}
+
 SceneSerializer::SceneSerializer(Scene& scene) : m_Scene(scene)
 {
 }
