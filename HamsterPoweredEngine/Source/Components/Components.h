@@ -7,6 +7,7 @@
 #include "Engine/HPUUID.h"
 #include "Engine/Actor.h"
 #include "Engine/ScriptableActor.h"
+#include "Engine/ScriptableLuaActor.h"
 
 
 struct Transform2D {
@@ -230,17 +231,21 @@ struct NativeScriptComponent
 
 struct LuaScriptComponent
 {
-	ScriptableActor* Instance = nullptr;
+	LuaScriptComponent() = default;
+	LuaScriptComponent(std::string script) { Scripts.push_back(script); }
+	LuaScriptComponent(std::vector<std::string> scripts) : Scripts(scripts) {}
+	
+	ScriptableLuaActor* Instance = nullptr;
 
-	std::vector<std::string> Scripts = {"assets/scripts/TestScript.lua"};
+	std::vector<std::string> Scripts = {};
 
-	ScriptableActor*(*InstantiateScript)();
+	ScriptableLuaActor*(*InstantiateScript)();
 	void(*DestroyScript)(LuaScriptComponent*);
 	
 	template<typename T>
 	void Bind()
 	{
-		InstantiateScript = []() { return static_cast<ScriptableActor*>(new T()); };
+		InstantiateScript = []() { return static_cast<ScriptableLuaActor*>(new T()); };
 		DestroyScript = [](LuaScriptComponent* lsc) { delete lsc->Instance; lsc->Instance = nullptr; };
 	}
 	

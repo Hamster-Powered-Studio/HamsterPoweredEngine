@@ -3,6 +3,10 @@
 #include "SFML/Window.hpp"
 #include "SFML/Main.hpp"
 #include "SFML/System.hpp"
+#include <PathCch.h>
+
+
+//#pragma comment(lib, "Pathcch.lib")
 
 
 std::string FileDialogs::OpenFile(sf::WindowHandle handle, const char* filter)
@@ -43,4 +47,20 @@ std::string FileDialogs::SaveFile(sf::WindowHandle handle, const char* filter)
 		return ofn.lpstrFile;
 	}
 	return std::string();
+}
+
+TCHAR* FileDialogs::GetThisPath(TCHAR* dest, size_t destSize)
+{
+	{
+		if (!dest) return NULL;
+
+		DWORD length = GetModuleFileName( NULL, dest, destSize );
+#if (NTDDI_VERSION >= NTDDI_WIN8)
+		PathCchRemoveFileSpec(dest, destSize);
+#else
+		if (MAX_PATH > destSize) return NULL;
+		PathRemoveFileSpec(dest);
+#endif
+		return dest;
+	}
 }

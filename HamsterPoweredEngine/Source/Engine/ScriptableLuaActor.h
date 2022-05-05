@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include "ScriptableActor.h"
 #include "sol/sol.hpp"
 
@@ -18,6 +19,6 @@ public:
 
     
 private:
-    static inline sol::state lua;
+    sol::state lua;
     std::vector<std::string> m_scripts;
 };

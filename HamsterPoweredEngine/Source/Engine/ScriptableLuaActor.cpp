@@ -12,6 +12,8 @@ void ScriptableLuaActor::ReloadScripts()
     {
         auto& scriptList = GetComponent<LuaScriptComponent>().Scripts;
         m_scripts.clear();
+        lua.stack_clear();
+        
         int index = 0;
         for (std::string& script : scriptList)
         {
@@ -25,11 +27,13 @@ void ScriptableLuaActor::ReloadScripts()
                 std::ofstream ofs(script);
                 ofs << content;                                    // Fix file
                 }
-            m_scripts.emplace_back(content);
+            m_scripts.emplace_back(script);
+            
             index++;
         }
     }
 }
+
 
 void ScriptableLuaActor::OnCreate()
 {
@@ -41,9 +45,8 @@ void ScriptableLuaActor::OnCreate()
         int index = 0;
         for (std::string& script : m_scripts)
         {
-            lua.script(m_scripts[index]);
+            lua.do_file(script);
             lua.script("OnCreate()");
-            lua.stack_clear();
             index++;
         }
     }
@@ -54,9 +57,8 @@ void ScriptableLuaActor::OnDestroy()
     ScriptableActor::OnDestroy();
     for (std::string& script : m_scripts)
     {
-        lua.script_file(script);
+        lua.do_file(script);
         lua.script("OnDestroy()");
-        //lua.stack_clear();
     }
 }
 
@@ -68,11 +70,9 @@ void ScriptableLuaActor::OnUpdate(sf::Time deltaTime)
         int index = 0;
         for (std::string& script : m_scripts)
         {
-            lua.script(m_scripts[index]);
+            lua.do_file(script);
             lua.script("OnUpdate()");
-            lua.stack_clear();
             index++;
         }
     }
-    
 }

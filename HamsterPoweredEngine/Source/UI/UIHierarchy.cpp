@@ -8,6 +8,7 @@
 #include "Engine/EditorLayer.h"
 #include "Scripts/CloseGameCollider.h"
 #include "Scripts/CameraController.h"
+#include "Utils/PlatformUtils.h"
 
 UIHierarchy::UIHierarchy(Scene& scene) : m_Context(&scene)
 {
@@ -368,7 +369,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!EditorLayer::selection.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { EditorLayer::selection.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { EditorLayer::selection.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { EditorLayer::selection.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!EditorLayer::selection.HasComponent<NativeScriptComponent>()) if (ImGui::MenuItem("GameCloser")) { EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<CloseGameCollider>(); EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<CameraController>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<LuaScriptComponent>()) if (ImGui::MenuItem("GameCloser")) { EditorLayer::selection.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
         
@@ -388,27 +389,58 @@ void UIHierarchy::DrawComponents(Actor& actor)
             DrawVec2Control("Scale", transform.Scale, 1.f, 0.1f);
         });
 
-    if (actor.GetComponent<RelationshipComponent>().Parent)
-    {
-        DrawComponent<RelationshipComponent>("Parent Attachment", actor, [](auto& component)
+        if (actor.GetComponent<RelationshipComponent>().Parent)
         {
-            auto& transform = component.Offset;
-            float* pos[2] = { &transform.Pos.x, &transform.Pos.y };
-            float* scale[2] = { &transform.Scale.x, &transform.Scale.y };
-
-            ImGui::Checkbox("Attach To Parent", &component.Attached);
-            
-            if (component.Attached)
+            DrawComponent<RelationshipComponent>("Parent Attachment", actor, [](auto& component)
             {
-                ImGui::Text("Parent Offsets");
-                DrawVec2Control("Rel Position", transform.Pos, 0.f, 1.f);
-                DrawFloatControl("Rel Rotation", transform.Rot, 0.f, 1.f);
-                DrawVec2Control("Rel Scale", transform.Scale, 1.f, 0.1f);
+                auto& transform = component.Offset;
+                float* pos[2] = { &transform.Pos.x, &transform.Pos.y };
+                float* scale[2] = { &transform.Scale.x, &transform.Scale.y };
+
+                ImGui::Checkbox("Attach To Parent", &component.Attached);
+                
+                if (component.Attached)
+                {
+                    ImGui::Text("Parent Offsets");
+                    DrawVec2Control("Rel Position", transform.Pos, 0.f, 1.f);
+                    DrawFloatControl("Rel Rotation", transform.Rot, 0.f, 1.f);
+                    DrawVec2Control("Rel Scale", transform.Scale, 1.f, 0.1f);
+                }
+
+            });
+        }
+
+        DrawComponent<LuaScriptComponent>("Lua Scripts", actor, [](LuaScriptComponent& component)
+        {
+            if (ImGui::Button("Add Script"))
+            {
+                component.Scripts.push_back({});
+                component.Instance->ReloadScripts();
+            }
+            
+            for (int i = 0; i < component.Scripts.size(); i++)
+            {
+                ImGui::PushID(i);
+                ImGui::InputText(std::string("Script ").append(std::to_string(i+1)).c_str(), &component.Scripts[i]);
+                ImGui::SameLine();
+                if (ImGui::Button("..."))
+                {
+                    component.Scripts[i] = FileDialogs::OpenFile(global::Game->window->getSystemHandle(), "Lua Script (*.lua)\0*.lua\0");
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Remove"))
+                {
+                    component.Scripts.erase(component.Scripts.begin() + i);
+                    component.Instance->ReloadScripts();
+                }
+                ImGui::PopID();
             }
 
+            if (ImGui::Button("Reload"))
+            {
+                component.Instance->ReloadScripts();
+            }
         });
-    }
-
 
 
         DrawComponent<SpriteRendererComponent>("Sprite Renderer", actor, [](auto& component)
