@@ -1,4 +1,5 @@
 #pragma once
+#define SOL_ALL_SAFETIES_ON 1
 
 #include "Components/Components.h"
 #include "Engine/Renderer.h"

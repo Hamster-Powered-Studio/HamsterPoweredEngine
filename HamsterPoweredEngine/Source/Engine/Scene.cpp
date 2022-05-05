@@ -111,6 +111,20 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 			nsc.Instance->OnUpdate(deltaTime);
 		});
 	}
+
+	{
+		Registry.view<LuaScriptComponent>().each([=](auto actor, auto& lsc)
+		{
+			//TODO: Move to Scene::OnScenePlay
+			if (!lsc.Instance)
+			{
+				lsc.Instance = lsc.InstantiateScript();
+				lsc.Instance->m_Actor = Actor{ actor, this };
+				lsc.Instance->OnCreate();
+			}
+			lsc.Instance->OnUpdate(deltaTime);
+		});
+	}
 	
 	{
 		auto group = Registry.view<TransformComponent, RelationshipComponent>();
@@ -351,5 +365,10 @@ void Scene::OnComponentAdded<MoveComponent>(Actor actor, MoveComponent& componen
 
 template<>
 void Scene::OnComponentAdded<NativeScriptComponent>(Actor actor, NativeScriptComponent& component)
+{	
+}
+
+template<>
+void Scene::OnComponentAdded<LuaScriptComponent>(Actor actor, LuaScriptComponent& component)
 {	
 }

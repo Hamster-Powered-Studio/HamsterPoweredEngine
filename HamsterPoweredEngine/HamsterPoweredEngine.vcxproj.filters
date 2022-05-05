@@ -195,9 +195,6 @@
     <ClCompile Include="Source\UI\ImGuiElement.cpp">
       <Filter>Source Files\UI Elements</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UI\UIActorDetails.cpp">
-      <Filter>Source Files\UI Elements</Filter>
-    </ClCompile>
     <ClCompile Include="Source\UI\UIHierarchy.cpp">
       <Filter>Source Files\UI Elements</Filter>
     </ClCompile>
@@ -207,7 +204,19 @@
     <ClCompile Include="Source\Utils\WindowsPlatformUtils.cpp">
       <Filter>Source Files\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="TileMap.cpp">
+    <ClCompile Include="Source\Engine\EditorCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\EditorLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\HPUUID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scripts\CloseGameCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -314,9 +323,6 @@
     <ClInclude Include="Source\UI\ImGuiElement.h">
       <Filter>Header Files\UI Elements</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UI\UIActorDetails.h">
-      <Filter>Header Files\UI Elements</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Utils\EditorColorPicker.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
@@ -326,11 +332,23 @@
     <ClInclude Include="Source\Utils\PlatformUtils.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="TextureLib.h">
+    <ClInclude Include="Source\Engine\EditorCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TileMap.h">
-      <Filter>Header Files\Engine</Filter>
+    <ClInclude Include="Source\Engine\EditorLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\HPUUID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\ScriptableActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scripts\CloseGameCollider.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

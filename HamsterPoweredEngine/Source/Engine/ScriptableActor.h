@@ -5,12 +5,19 @@
 class ScriptableActor
 {
 public:
+    ScriptableActor() {}
     virtual ~ScriptableActor() {}
     
     template<typename T>
     T& GetComponent()
     {
         return m_Actor.GetComponent<T>();
+    }
+
+    template<typename T>
+    bool HasComponent()
+    {
+        return m_Actor.HasComponent<T>();
     }
 
 protected:

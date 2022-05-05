@@ -228,6 +228,24 @@ struct NativeScriptComponent
 	
 };
 
+struct LuaScriptComponent
+{
+	ScriptableActor* Instance = nullptr;
+
+	std::vector<std::string> Scripts = {"assets/scripts/TestScript.lua"};
+
+	ScriptableActor*(*InstantiateScript)();
+	void(*DestroyScript)(LuaScriptComponent*);
+	
+	template<typename T>
+	void Bind()
+	{
+		InstantiateScript = []() { return static_cast<ScriptableActor*>(new T()); };
+		DestroyScript = [](LuaScriptComponent* lsc) { delete lsc->Instance; lsc->Instance = nullptr; };
+	}
+	
+};
+
 namespace meta
 {
 	template<>

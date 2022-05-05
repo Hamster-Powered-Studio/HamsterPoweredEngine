@@ -18,11 +18,30 @@
 #include "Engine/EditorLayer.h"
 #include "Scripts/CameraController.h"
 #include "Scripts/CloseGameCollider.h"
+#include <sol/sol.hpp>
 
+#include "ScriptableLuaActor.h"
+
+void doSomething()
+{
+    std::cout << "Did something!";
+}
+
+void some_function() {
+    std::cout << "some function!" << std::endl;
+}
 
 GameWindow::GameWindow()
 {
+    
     global::Game = this;
+
+    
+    
+    //sol::state lua;
+    
+    //lua.open_libraries(sol::lib::base);
+
     
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
     ::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
@@ -79,9 +98,9 @@ void GameWindow::WindowLoop()
         if (editor)
         {
             editor->OnUpdate();
-            Renderer::BeginDraw();
+            //Renderer::BeginDraw();
             currentScene->OnUpdateRuntime(global::deltaClock.getElapsedTime());
-            Renderer::EndDraw();
+            //Renderer::EndDraw();
         }
         else
         {
@@ -135,9 +154,13 @@ void GameWindow::NewEmptyScene()
     delete currentScene;
     currentScene = new Scene();
     Actor Cam = currentScene->CreateActor("Camera");
+    for (int i = 0; i < 10; i++)
+        currentScene->CreateActor("Lua").AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
+    
     Cam.AddComponent<CameraComponent>().SetPrimary(true);
     
     Cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+    Cam.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
     if (editor && editor->hier)
     { 
         editor->hier->SetContext(*currentScene);
