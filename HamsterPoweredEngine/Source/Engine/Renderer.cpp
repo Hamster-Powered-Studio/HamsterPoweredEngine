@@ -25,12 +25,11 @@ void Renderer::BeginDraw()
 	View->clear();
 }
 
-void Renderer::Draw(sf::Drawable& sprite, CameraComponent* camera)
+void Renderer::Draw(sf::Drawable& sprite, sf::View* camera)
 {
 	if (camera)
 	{
-		camera->Camera.setSize((sf::Vector2f)View->getSize() * camera->Zoom);
-		View->setView(camera->Camera);
+		View->setView(*camera);
 		View->draw(sprite);
 	}
 }

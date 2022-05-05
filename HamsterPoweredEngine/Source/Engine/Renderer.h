@@ -16,7 +16,7 @@ public:
 	static void Init();
 
 	static void BeginDraw();
-	static void Draw(sf::Drawable& sprite, CameraComponent* camera);
+	static void Draw(sf::Drawable& sprite, sf::View* camera);
 	static void EndDraw();
 	static void Resize(unsigned int width, unsigned int height);
 	

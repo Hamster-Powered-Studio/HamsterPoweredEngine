@@ -14,7 +14,6 @@ public:
 
 	bool open = true;
 	std::string label = "Element";
-
 	void CreateLabelID(std::string &label);
 	
 	static inline int elements;

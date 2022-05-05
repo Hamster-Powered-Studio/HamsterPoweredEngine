@@ -4,8 +4,9 @@
 #include "SFML/Graphics.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
-#include "UI/ImGuiElement.h"
 #include "Scene.h"
+
+class EditorLayer;
 
 class UIHierarchy;
 
@@ -29,8 +30,7 @@ public:
     void Begin();
     void WindowLoop();
 
-    void SetActiveView();
-
+    EditorLayer* editor;
     void NewEmptyScene();
     Scene* currentScene;
 
@@ -38,21 +38,12 @@ public:
 
     void ResizeGameView();
     
-    void ModernDarkTheme();
 
     Actor* selectedActor = nullptr;
 
-    ImGuiViewport* viewport;
+    
+    EditorCamera m_EditorCamera;
 
-    template<typename T, typename... Args>
-    T* Construct(Args&&... args);
-
-    void Destroy(ImGuiElement* Element);
-
-    void RenderUI();
-    std::vector<ImGuiElement*> UIElements;
-
-    UIHierarchy* hier;
 
 private:
     //static inline GameWindow* GameWindow::GameWindow_m = nullptr;

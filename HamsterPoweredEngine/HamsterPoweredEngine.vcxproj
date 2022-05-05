@@ -127,12 +127,16 @@
     <ClCompile Include="include\yaml-cpp-code\tag.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Engine\Actor.cpp" />
+    <ClCompile Include="Source\Engine\EditorCamera.cpp" />
+    <ClCompile Include="Source\Engine\EditorLayer.cpp" />
     <ClCompile Include="Source\Engine\GameWindow.cpp" />
     <ClCompile Include="Source\Engine\Global.cpp" />
     <ClCompile Include="Source\Engine\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Scene.cpp" />
     <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
     <ClCompile Include="Source\Engine\HPUUID.cpp" />
+    <ClCompile Include="Source\Scripts\CameraController.cpp" />
+    <ClCompile Include="Source\Scripts\CloseGameCollider.cpp" />
     <ClCompile Include="Source\UI\ImGuiElement.cpp" />
     <ClCompile Include="Source\UI\UIHierarchy.cpp" />
     <ClCompile Include="Source\UI\UIViewport.cpp" />
@@ -166,6 +170,8 @@
     <ClInclude Include="include\yaml-cpp-code\token.h" />
     <ClInclude Include="Source\Components\Components.h" />
     <ClInclude Include="Source\Engine\Actor.h" />
+    <ClInclude Include="Source\Engine\EditorCamera.h" />
+    <ClInclude Include="Source\Engine\EditorLayer.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
     <ClInclude Include="Source\Engine\GameWindow.h" />
     <ClInclude Include="Source\Engine\Global.h" />
@@ -173,6 +179,9 @@
     <ClInclude Include="Source\Engine\Scene.h" />
     <ClInclude Include="Source\Engine\SceneSerializer.h" />
     <ClInclude Include="Source\Engine\HPUUID.h" />
+    <ClInclude Include="Source\Engine\ScriptableActor.h" />
+    <ClInclude Include="Source\Scripts\CameraController.h" />
+    <ClInclude Include="Source\Scripts\CloseGameCollider.h" />
     <ClInclude Include="Source\UI\ImGuiElement.h" />
     <ClInclude Include="Source\UI\UIHierarchy.h" />
     <ClInclude Include="Source\UI\UIViewport.h" />

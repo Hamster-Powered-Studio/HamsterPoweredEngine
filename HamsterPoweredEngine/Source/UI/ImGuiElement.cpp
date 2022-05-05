@@ -23,7 +23,7 @@ void ImGuiElement::CreateLabelID(std::string &label)
 void ImGuiElement::OnImGuiRender()
 {
 	//ImGui::SetNextWindowSizeConstraints(ImVec2(100.0f, 300.0f), ImVec2(INFINITY, INFINITY));
-
+	
 
 
 }

@@ -145,7 +145,6 @@ void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 		SerializeComponent<RelationshipComponent>(out, &actor);
 		SerializeComponent<CameraComponent>(out, &actor);
 		SerializeComponent<SpriteRendererComponent>(out, &actor);
-		SerializeComponent<InputComponent>(out, &actor);
 		SerializeComponent<TileMapComponent>(out, &actor);
 		SerializeComponent<BoxColliderComponent>(out, &actor);
 		out << YAML::EndMap;
@@ -272,13 +271,6 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				if(spriteComponent["ZOrder"]) sprite.ZOrder = spriteComponent["ZOrder"].as<float>();
 			}
 
-			auto inputComponent = actor["InputComponent"];
-			if (inputComponent)
-			{
-				auto& input = deserializedActor.AddComponent<InputComponent>();
-				input.Active = inputComponent["Active"].as<bool>();
-			}
-
 			auto tmComponent = actor["TileMapComponent"];
 			if (tmComponent)
 			{
@@ -295,12 +287,13 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 			}
 
 			auto box = actor["BoxColliderComponent"];
-			if (inputComponent)
+			if (box)
 			{
 				auto& input = deserializedActor.AddComponent<BoxColliderComponent>();
 				input.Active = box["Active"].as<bool>();
 				input.Preview = box["Preview"].as<bool>();
 				input.WrapToSprite = box["Preview"].as<bool>();
+				input.Offset = box["Offset"].as<sf::Vector2f>();
 				input.Collider.height = box["Collider"]["Height"].as<float>();
 				input.Collider.width = box["Collider"]["Width"].as<float>();
 				input.Collider.top = box["Collider"]["Top"].as<float>();

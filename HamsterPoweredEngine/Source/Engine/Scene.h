@@ -4,6 +4,7 @@
 #include <SFML/System/Clock.hpp>
 
 #include "HPUUID.h"
+#include "Engine/EditorCamera.h"
 
 struct Actor;
 
@@ -14,7 +15,8 @@ public:
 	~Scene();
 	Actor GetByUUID(HPUUID uuid);
 
-	void Update(sf::Time deltaTime);
+	void OnUpdateRuntime(sf::Time deltaTime);
+	void OnUpdateEditor(sf::Time deltaTime, EditorCamera& camera);
 
 	Scene* get()
 	{

@@ -6,6 +6,7 @@
 #include "Engine/TileMap.h"
 #include "Engine/HPUUID.h"
 #include "Engine/Actor.h"
+#include "Engine/ScriptableActor.h"
 
 
 struct Transform2D {
@@ -119,22 +120,14 @@ struct CameraComponent
 	CameraComponent(const sf::View& camera) : Camera(camera) {}
 };
 
-struct InputComponent
-{
-	bool Active = true;
-	
-	InputComponent() = default;
-	InputComponent(bool active) : Active(active) {}
-	InputComponent(const InputComponent&) = default;
-	//InputComponent(const sf::View & camera) : Camera(camera) {}
-};
-
 struct BoxColliderComponent
 {
 	bool Active = true;
 	bool Preview = false;
+	Actor Other = {};
 	sf::FloatRect Collider = {0, 0, 100, 100};
 	sf::RectangleShape previewRect;
+	sf::Vector2f Offset;
 	bool WrapToSprite = true;
 	bool IsColliding = false;
 	
@@ -217,6 +210,24 @@ struct TileMapComponent
 	}
 };
 
+struct NativeScriptComponent
+{
+	ScriptableActor* Instance = nullptr;
+
+
+	ScriptableActor*(*InstantiateScript)();
+	void(*DestroyScript)(NativeScriptComponent*);
+	
+	template<typename T>
+	void Bind()
+	{
+		InstantiateScript = []() { return static_cast<ScriptableActor*>(new T()); };
+		DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		
+	}
+	
+};
+
 namespace meta
 {
 	template<>
@@ -250,14 +261,6 @@ namespace meta
 			member("Zoom", &CameraComponent::Zoom),
 			member("Primary", &CameraComponent::Primary),
 			member("InheritRotation", &CameraComponent::InheritRotation)
-		);
-	}
-
-	template<>
-	inline auto registerMembers<InputComponent>()
-	{
-		return members(
-			member("Active", &InputComponent::Active)
 		);
 	}
 
@@ -335,6 +338,7 @@ namespace meta
 			member("Active", &BoxColliderComponent::Active),
 			member("Preview", &BoxColliderComponent::Preview),
 			member("WrapToSprite", &BoxColliderComponent::WrapToSprite),
+			member("Offset", &BoxColliderComponent::Offset),
 			member("Collider", &BoxColliderComponent::Collider)
 		);
 	}

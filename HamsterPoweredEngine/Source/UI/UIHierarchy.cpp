@@ -5,6 +5,9 @@
 #include "imgui_internal.h"
 #include <iostream>
 #include "Engine/Scene.h"
+#include "Engine/EditorLayer.h"
+#include "Scripts/CloseGameCollider.h"
+#include "Scripts/CameraController.h"
 
 UIHierarchy::UIHierarchy(Scene& scene) : m_Context(&scene)
 {
@@ -13,7 +16,7 @@ UIHierarchy::UIHierarchy(Scene& scene) : m_Context(&scene)
 void UIHierarchy::SetContext(Scene& context)
 {
     m_Context = &context;
-    m_SelectionContext = {};
+    EditorLayer::selection = {};
 }
 
 void UIHierarchy::OnImGuiRender()
@@ -59,7 +62,7 @@ void UIHierarchy::OnImGuiRender()
     
     if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
     {
-        m_SelectionContext = {};
+        EditorLayer::selection = {};
     }
     
     
@@ -74,12 +77,11 @@ void UIHierarchy::OnImGuiRender()
 
     ImGui::End();
 
-    if (!open) global::Game->Destroy(this);
 
     ImGui::Begin("Details");
-    if (m_SelectionContext)
+    if (EditorLayer::selection)
     {
-        DrawComponents(m_SelectionContext);
+        DrawComponents(EditorLayer::selection);
     }
     ImGui::End();
 }
@@ -95,7 +97,7 @@ void UIHierarchy::DrawActorNode(Actor actor)
     ImGuiTreeNodeFlags flags = { ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick };
     
     if (relations.children.size() == 0) flags |= ImGuiTreeNodeFlags_Leaf;
-    if (m_SelectionContext == actor) flags |= ImGuiTreeNodeFlags_Selected;
+    if (EditorLayer::selection == actor) flags |= ImGuiTreeNodeFlags_Selected;
 
     
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)actor, flags, tag.c_str());
@@ -103,7 +105,7 @@ void UIHierarchy::DrawActorNode(Actor actor)
     
     if (ImGui::BeginDragDropSource())
     {
-        ImGui::SetDragDropPayload("HIERARCHY_ACTOR", &m_SelectionContext, sizeof(Actor));
+        ImGui::SetDragDropPayload("HIERARCHY_ACTOR", &EditorLayer::selection, sizeof(Actor));
         ImGui::EndDragDropSource();
     }   
     if (ImGui::BeginDragDropTarget())
@@ -158,7 +160,7 @@ void UIHierarchy::DrawActorNode(Actor actor)
 
     if (ImGui::IsItemClicked())
     {
-        m_SelectionContext = actor;
+        EditorLayer::selection = actor;
     }
 
     if (opened)
@@ -176,9 +178,9 @@ void UIHierarchy::DrawActorNode(Actor actor)
         
         if (actorDeleted)
         {
-            m_Context->DestroyActor(m_SelectionContext);
-            if (m_SelectionContext == actor)
-                m_SelectionContext = {};
+            m_Context->DestroyActor(EditorLayer::selection);
+            if (EditorLayer::selection == actor)
+                EditorLayer::selection = {};
         }
 }
 
@@ -190,8 +192,9 @@ void Space()
     ImGui::Spacing();
 }
 
-static void DrawVec2Control(const std::string& label, sf::Vector2f& values, float resetValue = 0.0f, float speed = 1.f, float columnWidth = 100.0f)
+static bool DrawVec2Control(const std::string& label, sf::Vector2f& values, float resetValue = 0.0f, float speed = 1.f, float columnWidth = 100.0f)
 {
+    bool changed = false;
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
 
@@ -219,7 +222,7 @@ static void DrawVec2Control(const std::string& label, sf::Vector2f& values, floa
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##X", &values.x, speed);
+    if (ImGui::DragFloat("##X", &values.x, speed)) changed = true;
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -234,17 +237,20 @@ static void DrawVec2Control(const std::string& label, sf::Vector2f& values, floa
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##Y", &values.y, speed);
+    if (ImGui::DragFloat("##Y", &values.y, speed)) changed = true;
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
 
     ImGui::Columns(1);
     ImGui::PopID();
+
+    return changed;
 }
 
-static void DrawFloatControl(const std::string& label, float& value, float resetValue = 0.0f, float speed = 1.f, float columnWidth = 100.0f)
+static bool DrawFloatControl(const std::string& label, float& value, float resetValue = 0.0f, float speed = 1.f, float columnWidth = 100.0f)
 {
+    bool changed = false;
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
 
@@ -273,14 +279,14 @@ static void DrawFloatControl(const std::string& label, float& value, float reset
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##X", &value, speed);
+    if (ImGui::DragFloat("##X", &value, speed)) changed = true;;
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
 
     ImGui::Columns(1);
     ImGui::PopID();
-
+    return changed;
 }
 
 template<typename T, typename UIFunction>
@@ -358,11 +364,11 @@ void UIHierarchy::DrawComponents(Actor& actor)
 
         if (ImGui::BeginPopup("AddComponent"))
         {
-            if (!m_SelectionContext.HasComponent<CameraComponent>()) if (ImGui::MenuItem("Camera")) { m_SelectionContext.AddComponent<CameraComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!m_SelectionContext.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { m_SelectionContext.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!m_SelectionContext.HasComponent<InputComponent>()) if (ImGui::MenuItem("Input")) { m_SelectionContext.AddComponent<InputComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!m_SelectionContext.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { m_SelectionContext.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!m_SelectionContext.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { m_SelectionContext.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<CameraComponent>()) if (ImGui::MenuItem("Camera")) { EditorLayer::selection.AddComponent<CameraComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { EditorLayer::selection.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { EditorLayer::selection.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { EditorLayer::selection.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<NativeScriptComponent>()) if (ImGui::MenuItem("GameCloser")) { EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<CloseGameCollider>(); EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<CameraController>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
         
@@ -431,16 +437,17 @@ void UIHierarchy::DrawComponents(Actor& actor)
         DrawComponent<BoxColliderComponent>("Box Collider", actor, [](BoxColliderComponent& component)
         {
             float boxDims[2] = {component.Collider.width, component.Collider.height};
+            sf::Vector2f Dims(component.Collider.width, component.Collider.height);
             ImGui::Checkbox("Active", &component.Active);
             ImGui::Checkbox("Preview", &component.Preview);
             if (!ImGui::Checkbox("Wrap to Sprite", &component.WrapToSprite))
+
+            if (DrawVec2Control("Dimensions", Dims))
             {
-                if (ImGui::DragFloat2("Box Dimensions", boxDims))
-                {
-                    component.Collider.width = boxDims[0];
-                    component.Collider.height = boxDims[1];
-                }
+                component.Collider.width = Dims.x;
+                component.Collider.height = Dims.y;
             }
+            DrawVec2Control("Offset", component.Offset);
         });
 
     DrawComponent<CameraComponent>("Camera", actor, [](auto& component)
@@ -450,11 +457,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             ImGui::Checkbox("Inherit Rotation", &component.InheritRotation);
         });
     
-
-    DrawComponent<InputComponent>("Input", actor, [](auto& component)
-        {
-            ImGui::Checkbox("Active", &component.Active);
-        });
+    
 
     DrawComponent<TileMapComponent>("Tilemap", actor, [](TileMapComponent& component)
         {
