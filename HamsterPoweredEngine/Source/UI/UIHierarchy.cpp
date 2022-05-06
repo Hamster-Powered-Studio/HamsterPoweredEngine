@@ -415,7 +415,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (ImGui::Button("Add Script"))
             {
                 component.Scripts.push_back({});
-                component.Instance->ReloadScripts();
+                //component.Instance->ReloadScripts();
             }
             
             for (int i = 0; i < component.Scripts.size(); i++)

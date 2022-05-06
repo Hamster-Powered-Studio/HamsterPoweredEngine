@@ -122,7 +122,8 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 				lsc.Instance->m_Actor = Actor{ actor, this };
 				lsc.Instance->OnCreate();
 			}
-			lsc.Instance->OnUpdate(deltaTime);
+			if (lsc.Scripts.size() > 0)
+				lsc.Instance->OnUpdate(deltaTime);
 		});
 	}
 	

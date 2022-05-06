@@ -1,5 +1,6 @@
 #pragma once
-#define TCHAR wchar_t
+
+#include <windows.h>
 #include "SFML/Window.hpp"
 #include <string>
 

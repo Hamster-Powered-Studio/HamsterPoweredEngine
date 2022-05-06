@@ -18,8 +18,6 @@
 #include "Engine/EditorLayer.h"
 #include "Scripts/CameraController.h"
 #include "Scripts/CloseGameCollider.h"
-#include <sol/sol.hpp>
-
 #include "ScriptableLuaActor.h"
 
 void doSomething()
@@ -33,7 +31,7 @@ void some_function() {
 
 GameWindow::GameWindow()
 {
-    
+    LuaEngine::lua.open_libraries(sol::lib::base);
     global::Game = this;
 
     
@@ -45,7 +43,7 @@ GameWindow::GameWindow()
     
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
     ::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
-    
+    window->setFramerateLimit(60);
     auto image = sf::Image{};
     if (image.loadFromFile("resources/icon.png"))
     {

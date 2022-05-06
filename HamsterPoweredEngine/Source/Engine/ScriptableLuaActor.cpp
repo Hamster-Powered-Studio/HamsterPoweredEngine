@@ -1,25 +1,25 @@
 ﻿#include "ScriptableLuaActor.h"
 
+
+
 #include <fstream>
 #include <SFML/OpenGL.hpp>
-
+#include "LuaEngine.h"
 #include "Components/Components.h"
+#include "Actor.h"
 
 
 void ScriptableLuaActor::ReloadScripts()
 {
     if (HasComponent<LuaScriptComponent>())
     {
-        auto& scriptList = GetComponent<LuaScriptComponent>().Scripts;
-        m_scripts.clear();
-        lua.stack_clear();
+        if (!GetComponent<LuaScriptComponent>().Scripts.size() > 0) return;
+        auto& script = GetComponent<LuaScriptComponent>().Scripts[0];
         
-        int index = 0;
-        for (std::string& script : scriptList)
+        std::ifstream ifs(script);
+        if (ifs)
         {
-            std::ifstream ifs(script);
-            std::string content( (std::istreambuf_iterator<char>(ifs) ),
-                                 (std::istreambuf_iterator<char>()    ) );
+            std::string content( (std::istreambuf_iterator<char>(ifs) ),(std::istreambuf_iterator<char>()    ) );
             if (content.compare( 0, 3, "\xEF\xBB\xBF" ) == 0)  // Is the file marked as UTF-8?
                 {
                 
@@ -27,9 +27,12 @@ void ScriptableLuaActor::ReloadScripts()
                 std::ofstream ofs(script);
                 ofs << content;                                    // Fix file
                 }
-            m_scripts.emplace_back(script);
             
-            index++;
+            lua.script_file(script);
+
+            lua.script("OnCreate()");
+            
+            
         }
     }
 }
@@ -39,14 +42,18 @@ void ScriptableLuaActor::OnCreate()
 {
     ScriptableActor::OnCreate();
     
+    BindLuaFunctions();
+    
     ReloadScripts();
     if (HasComponent<LuaScriptComponent>())
     {
         int index = 0;
         for (std::string& script : m_scripts)
         {
-            lua.do_file(script);
-            lua.script("OnCreate()");
+
+            //chai.eval(script);
+            //lua.do_file(script);
+            //lua.script("OnCreate()");
             index++;
         }
     }
@@ -57,8 +64,10 @@ void ScriptableLuaActor::OnDestroy()
     ScriptableActor::OnDestroy();
     for (std::string& script : m_scripts)
     {
-        lua.do_file(script);
-        lua.script("OnDestroy()");
+
+        //chai.eval(script);
+        //lua.do_file(script);
+        //lua.script("OnDestroy()");
     }
 }
 
@@ -68,11 +77,26 @@ void ScriptableLuaActor::OnUpdate(sf::Time deltaTime)
     if (HasComponent<LuaScriptComponent>())
     {
         int index = 0;
+        //lua["OnUpdate"](deltaTime.asSeconds());
+        //lua.script("OnUpdate(" + std::to_string(deltaTime.asSeconds()) + ")");
+        lua["OnUpdate"](deltaTime.asSeconds());
+            
         for (std::string& script : m_scripts)
         {
-            lua.do_file(script);
-            lua.script("OnUpdate()");
+            //chaiscript::ChaiScript chaiInstance;
+            //chaiInstance.eval(script);
+            //chaiInstance.eval("OnUpdate");
+            
+            //auto Update = chai.eval<std::function<void()>>("OnUpdate");
+            //Update();
+            //lua.do_file(script);
+            //lua.script("OnUpdate()");
             index++;
         }
     }
+}
+
+void ScriptableLuaActor::BindLuaFunctions()
+{
+    
 }

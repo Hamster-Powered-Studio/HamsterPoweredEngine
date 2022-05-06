@@ -1,14 +1,16 @@
 ﻿#pragma once
 
+#include "LuaEngine.h"
 #include "ScriptableActor.h"
-#include "sol/sol.hpp"
+
+
 
 class ScriptableLuaActor : public ScriptableActor
 {
 public:
     ScriptableLuaActor()
     {
-        lua.open_libraries(sol::lib::base);
+        
     }
 
     void ReloadScripts();
@@ -17,8 +19,12 @@ public:
     void OnDestroy() override;
     void OnUpdate(sf::Time deltaTime) override;
 
+    void BindLuaFunctions();
+
     
 private:
-    sol::state lua;
     std::vector<std::string> m_scripts;
+    std::function<void()> Update;
+    sol::state& lua = LuaEngine::lua;
+    
 };

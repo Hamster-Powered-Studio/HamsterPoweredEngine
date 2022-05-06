@@ -6,7 +6,7 @@
 #include <PathCch.h>
 
 
-//#pragma comment(lib, "Pathcch.lib")
+#pragma comment(lib, "Pathcch.lib")
 
 
 std::string FileDialogs::OpenFile(sf::WindowHandle handle, const char* filter)
