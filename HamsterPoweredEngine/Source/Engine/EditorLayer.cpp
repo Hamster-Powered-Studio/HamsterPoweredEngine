@@ -3,11 +3,14 @@
 #include "Utils/PlatformUtils.h"
 #include "SceneSerializer.h"
 #include "Renderer.h"
+#include "Components/Components.h"
 //#include "Engine/GameWindow.h"
 
 EditorLayer::EditorLayer(GameWindow& instance) : Game(instance)
 {
-    
+    m_EditorCamera.m_ViewportSize = sf::Vector2u(Game.window->getSize().x, Game.window->getSize().y);
+    m_iconPlay.loadFromFile("resources/playbutton.png");
+    m_iconStop.loadFromFile("resources/stopbutton.png");
     ConstructUI();
 }
 
@@ -124,18 +127,62 @@ void EditorLayer::RenderUI()
 
     ImGui::EndMainMenuBar();
 
-    float fps = 1.f / global::deltaTime.asSeconds();
+    float fps = 1.f / global::deltaTime;
     ImGui::Begin("Stats");
     ImGui::Text("FPS: %f", fps);
     ImGui::Text("Render Resolution: %i x %i", Renderer::GetView()->getSize().x, Renderer::GetView()->getSize().y);
     ImGui::End();
 
+    UI_Toolbar();
+    
     for (unsigned int i = 0; i < UIElements.size(); i++)
     {
 
         UIElements[i]->OnImGuiRender();
 
     }
+}
+
+void EditorLayer::UI_Toolbar()
+{
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    auto& colors = ImGui::GetStyle().Colors;
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(colors[ImGuiCol_ButtonHovered].x, colors[ImGuiCol_ButtonHovered].y, colors[ImGuiCol_ButtonHovered].z, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(colors[ImGuiCol_ButtonActive].x, colors[ImGuiCol_ButtonActive].y, colors[ImGuiCol_ButtonActive].z, 0.7f));
+    
+    sf::Texture& icon = m_SceneState == SceneState::Edit ? m_iconPlay : m_iconStop;
+    icon.setSmooth(true);
+    ImGui::Begin("Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+    float size = ImGui::GetContentRegionAvail().y - 4.0f;
+    ImGui::SameLine((ImGui::GetContentRegionMax().x * 0.5) - (size * 0.5f));
+        if (ImGui::ImageButton(icon, ImVec2(size, size)))
+        {
+            if (m_SceneState == SceneState::Edit)
+            {
+                OnScenePlay();
+            }
+            else if (m_SceneState == SceneState::Play)
+            {
+                OnSceneStop();
+            }
+        }
+    ImGui::End();
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor(3);
+}
+
+void EditorLayer::OnScenePlay()
+{
+    m_SceneState = SceneState::Play;
+    Game.currentScene->Reg().view<LuaScriptComponent>().each([=](LuaScriptComponent& lsc) { lsc.Instance->ReloadScripts(); });
+}
+
+void EditorLayer::OnSceneStop()
+{
+    m_SceneState = SceneState::Edit;
 }
 
 void EditorLayer::OnUpdate()
@@ -149,11 +196,26 @@ void EditorLayer::OnUpdate()
     if (uiviewport)
     {
         if (uiviewport->focused)
-            Game.m_EditorCamera.OnUpdate(global::deltaTime);
+            m_EditorCamera.OnUpdate(global::deltaTime);
     }
 
+    
     Renderer::BeginDraw();
-    Game.currentScene->OnUpdateEditor(global::deltaClock.getElapsedTime(), Game.m_EditorCamera);
+    switch (m_SceneState)
+    {
+    case SceneState::Edit:
+        {
+            Game.currentScene->OnUpdateEditor(global::deltaTime, m_EditorCamera);
+            break;
+        }
+    case SceneState::Play:
+        {
+            //Game.currentScene->OnUpdateEditor(global::deltaClock.getElapsedTime(), m_EditorCamera);
+            Game.currentScene->OnUpdateRuntime(global::deltaTime);
+            break;
+        }
+    }
+    
     Renderer::EndDraw();
    }
 

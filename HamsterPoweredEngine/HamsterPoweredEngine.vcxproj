@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\lua;$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\include\lua;$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;$(ProjectDir)include\python;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -65,6 +65,12 @@
       <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;opengl32.lib;lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Editor\resources"
+xcopy /E /Y "$(ProjectDir)assets" "$(SolutionDir)Editor\assets"
+
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Game|Win32'">
     <ClCompile>
@@ -74,7 +80,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\include\lua;$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\include\lua;$(ProjectDir)\Source\;$(ProjectDir)\include\imgui\;$(ProjectDir)include\entt\include;$(ProjectDir)include;$(ProjectDir)include\yaml;$(ProjectDir)include\python;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -86,6 +92,10 @@
       <AdditionalLibraryDirectories>$(ProjectDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;sfml-audio.lib;opengl32.lib;lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y "$(ProjectDir)assets" "$(SolutionDir)Game\assets"
+xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\imgui\imgui-SFML.cpp" />
@@ -171,6 +181,7 @@
     <ClInclude Include="include\yaml-cpp-code\tag.h" />
     <ClInclude Include="include\yaml-cpp-code\token.h" />
     <ClInclude Include="Source\Components\Components.h" />
+    <ClInclude Include="Source\Components\LuaBindings.h" />
     <ClInclude Include="Source\Engine\Actor.h" />
     <ClInclude Include="Source\Engine\EditorCamera.h" />
     <ClInclude Include="Source\Engine\EditorLayer.h" />

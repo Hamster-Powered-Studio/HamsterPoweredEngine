@@ -5,7 +5,7 @@ namespace global
     sf::Event* event = nullptr;
     GameWindow* Game = nullptr;
     sf::Clock deltaClock;
-    sf::Time deltaTime;
+    float deltaTime;
     bool isInPlay = NDEBUG;
 
 }

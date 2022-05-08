@@ -13,11 +13,12 @@ public:
         
     }
 
+    ~ScriptableLuaActor();
     void ReloadScripts();
     
     void OnCreate() override;
     void OnDestroy() override;
-    void OnUpdate(sf::Time deltaTime) override;
+    void OnUpdate(float deltaTime) override;
 
     void BindLuaFunctions();
 

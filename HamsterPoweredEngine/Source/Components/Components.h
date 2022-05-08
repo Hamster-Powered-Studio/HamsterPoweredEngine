@@ -10,6 +10,7 @@
 #include "Engine/ScriptableLuaActor.h"
 
 
+
 struct Transform2D {
 
 	sf::Vector2f Pos = {0, 0};
@@ -253,6 +254,13 @@ struct LuaScriptComponent
 
 namespace meta
 {
+	template<>
+	inline auto registerMembers<LuaScriptComponent>()
+	{
+		return members(
+			member("Scripts", &LuaScriptComponent::Scripts));
+	}
+	
 	template<>
 	inline auto registerMembers<IDComponent>()
 	{

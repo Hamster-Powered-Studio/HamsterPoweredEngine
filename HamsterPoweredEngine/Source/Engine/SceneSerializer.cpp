@@ -143,6 +143,7 @@ void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 		SerializeComponent<TagComponent>(out, &actor);
 		SerializeComponent<TransformComponent>(out, &actor);
 		SerializeComponent<RelationshipComponent>(out, &actor);
+		SerializeComponent<LuaScriptComponent>(out, &actor);
 		SerializeComponent<CameraComponent>(out, &actor);
 		SerializeComponent<SpriteRendererComponent>(out, &actor);
 		SerializeComponent<TileMapComponent>(out, &actor);
@@ -298,6 +299,14 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				input.Collider.width = box["Collider"]["Width"].as<float>();
 				input.Collider.top = box["Collider"]["Top"].as<float>();
 				input.Collider.left = box["Collider"]["Left"].as<float>();
+			}
+
+			auto lua = actor["LuaScriptComponent"];
+			if (lua)
+			{
+				auto& input = deserializedActor.AddComponent<LuaScriptComponent>();
+				input.Bind<ScriptableLuaActor>();
+				input.Scripts = lua["Scripts"].as<std::vector<std::string>>();
 			}
 	return deserializedActor;
 }

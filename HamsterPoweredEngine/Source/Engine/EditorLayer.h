@@ -14,11 +14,17 @@ public:
     void ConstructUI();
     void RenderUI();
 
+    void UI_Toolbar();
+    void OnScenePlay();
+    void OnSceneStop();
+
+    
     UIViewport* uiviewport;
     UIHierarchy* hier;
     ImGuiViewport* viewport;
     ImGuiIO* io;
-
+    EditorCamera m_EditorCamera;
+    
     GameWindow& Game;
 
     std::vector<ImGuiElement*> UIElements;
@@ -30,4 +36,12 @@ public:
 
     void Destroy(ImGuiElement* element);
 
+    enum class SceneState
+    {
+        Edit = 0, Play = 1
+    };
+
+    sf::Texture m_iconPlay;
+    sf::Texture m_iconStop;
+    SceneState m_SceneState = SceneState::Edit;
 };

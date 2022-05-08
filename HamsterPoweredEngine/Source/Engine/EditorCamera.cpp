@@ -55,7 +55,7 @@ void EditorCamera::Resize(float x, float y)
     setSize(x * distance, y * distance);
 }
 
-void EditorCamera::OnUpdate(sf::Time deltaTime)
+void EditorCamera::OnUpdate(float deltaTime)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
     {

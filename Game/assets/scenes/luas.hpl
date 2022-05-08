@@ -1,0 +1,303 @@
+Scene: Untitled
+Actors:
+  - Actor: 1153507315138586566
+    IDComponent:
+      ID: 1153507315138586566
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 16753407206873670841
+    IDComponent:
+      ID: 16753407206873670841
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 6678650187413199721
+    IDComponent:
+      ID: 6678650187413199721
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 901825379257816423
+    IDComponent:
+      ID: 901825379257816423
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 14471173787526506403
+    IDComponent:
+      ID: 14471173787526506403
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 256809304358503438
+    IDComponent:
+      ID: 256809304358503438
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 2272668918548465091
+    IDComponent:
+      ID: 2272668918548465091
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 18296370891523644049
+    IDComponent:
+      ID: 18296370891523644049
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 10397546154453398164
+    IDComponent:
+      ID: 10397546154453398164
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 1900657424170087970
+    IDComponent:
+      ID: 1900657424170087970
+    TagComponent:
+      Tag: Lua
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+  - Actor: 11508855967556970522
+    IDComponent:
+      ID: 11508855967556970522
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Transform:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    RelationshipComponent:
+      Parent: 0
+      Children:
+        []
+      Attached: true
+      Offset:
+        Position:
+          x: 0
+          y: 0
+        Rotation: 0
+        Scale:
+          x: 1
+          y: 1
+    CameraComponent:
+      Zoom: 1
+      Primary: false
+      InheritRotation: false

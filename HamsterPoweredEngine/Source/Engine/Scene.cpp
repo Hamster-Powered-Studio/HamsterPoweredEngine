@@ -5,6 +5,8 @@
 #include <queue>
 
 #include "Engine.h"
+//#include "Global.h"
+#include "Global.h"
 #include "Components/Components.h"
 #include "Engine/HPUUID.h"
 
@@ -50,9 +52,44 @@ struct PQElement
 	}
 };
 
-void Scene::OnUpdateEditor(sf::Time deltaTime, EditorCamera& camera)
+void Scene::UpdateRelationships()
+{
+	{
+		auto group = Registry.view<TransformComponent, RelationshipComponent>();
+		for (auto actor : group)
+		{
+			auto [transform, relationship] = group.get<TransformComponent, RelationshipComponent>(actor);
+			if (relationship.Parent && relationship.Attached)
+			{
+				TransformComponent parentTransformComp = relationship.Parent.GetComponent<TransformComponent>();
+				transform.Transform = parentTransformComp.Transform + relationship.Offset;
+			}
+		}
+	}
+}
+
+
+
+
+void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 {
 	std::priority_queue<PQElement> RenderQueue;
+
+	{
+		Registry.view<LuaScriptComponent>().each([=](auto actor, auto& lsc)
+		{
+			//TODO: Move to Scene::OnScenePlay
+			if (!lsc.Instance)
+			{
+				lsc.Instance = lsc.InstantiateScript();
+				lsc.Instance->m_Actor = Actor{ actor, this };
+				lsc.Instance->ReloadScripts();
+			}
+		});
+	}
+
+	UpdateRelationships();
+	
 		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto actor : group)
 		{
@@ -68,8 +105,36 @@ void Scene::OnUpdateEditor(sf::Time deltaTime, EditorCamera& camera)
 				elem.priority = sprite.ZOrder;
 				RenderQueue.push(elem);
 			}
-			
 		}
+
+	auto view = Registry.view<BoxColliderComponent, TransformComponent, MoveComponent>();
+	for (auto actor : view)
+	{
+		auto [collider, transform, move] = view.get<BoxColliderComponent, TransformComponent, MoveComponent>(actor);
+		if (collider.WrapToSprite)
+		{
+			if (Registry.any_of<SpriteRendererComponent>(actor))
+			{
+				auto& spr = Registry.get<SpriteRendererComponent>(actor);
+				collider.Collider.width = spr.Sprite.getTexture()->getSize().x;
+				collider.Collider.height = spr.Sprite.getTexture()->getSize().y;
+			}
+		}
+			
+		collider.Collider.left = transform.Transform.Pos.x - (collider.Collider.width/2);
+		collider.Collider.top = transform.Transform.Pos.y - (collider.Collider.height/2);
+			
+		if (collider.Preview)
+		{
+			collider.previewRect.setSize({collider.Collider.width, collider.Collider.height});
+			collider.previewRect.setPosition(transform.Transform.Pos + collider.Offset);
+			collider.previewRect.setOrigin(collider.Collider.width/2, collider.Collider.height/2);
+			PQElement prev;
+			prev.elem = &collider.previewRect;
+			prev.priority = 99999;
+			RenderQueue.emplace(prev);
+		}
+	}
 		
 		auto maps = Registry.view<TileMapComponent, TransformComponent>();
 		for (auto actor : maps)
@@ -93,7 +158,7 @@ void Scene::OnUpdateEditor(sf::Time deltaTime, EditorCamera& camera)
 		}
 }
 
-void Scene::OnUpdateRuntime(sf::Time deltaTime)
+void Scene::OnUpdateRuntime(float deltaTime)
 {
 	std::priority_queue<PQElement> RenderQueue;
 
@@ -121,24 +186,15 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 				lsc.Instance = lsc.InstantiateScript();
 				lsc.Instance->m_Actor = Actor{ actor, this };
 				lsc.Instance->OnCreate();
+				lsc.Instance->ReloadScripts();
 			}
 			if (lsc.Scripts.size() > 0)
 				lsc.Instance->OnUpdate(deltaTime);
+			std::cout << 1.f / global::deltaTime << std::endl;
 		});
 	}
 	
-	{
-		auto group = Registry.view<TransformComponent, RelationshipComponent>();
-		for (auto actor : group)
-		{
-			auto [transform, relationship] = group.get<TransformComponent, RelationshipComponent>(actor);
-			if (relationship.Parent && relationship.Attached)
-			{
-				TransformComponent parentTransformComp = relationship.Parent.GetComponent<TransformComponent>();
-				transform.Transform = parentTransformComp.Transform + relationship.Offset;
-			}
-		}
-	}
+	UpdateRelationships();
 	
 
 	{
@@ -221,7 +277,6 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 	}
 	
 	
-	CameraComponent* mainCamera = nullptr;
 	{
 		auto group = Registry.view<TransformComponent, CameraComponent>();
 		for (auto actor : group)
@@ -236,7 +291,11 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 
 			if (camera.Primary)
 			{
+				bool resize = false;
+				if (mainCamera != &camera) resize = true;
 				mainCamera = &camera;
+				
+				//if (resize) global::Game->ResizeGameView();
 			}
 		}
 	}
@@ -244,6 +303,12 @@ void Scene::OnUpdateRuntime(sf::Time deltaTime)
 	
 	if (mainCamera)
 	{
+
+		if (global::Game->editor)	
+			if (mainCamera->Camera.getSize() != sf::Vector2f(Renderer::GetView()->getSize().x, Renderer::GetView()->getSize().y))
+			{
+				mainCamera->Camera.setSize(Renderer::GetView()->getSize().x, Renderer::GetView()->getSize().y);
+			}
 		
 		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto actor : group)

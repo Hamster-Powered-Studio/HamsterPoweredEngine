@@ -13,7 +13,7 @@ public:
     void MousePan(sf::Vector2f delta);
     void MouseZoom(float delta);
     void Resize(float x, float y);
-    void OnUpdate(sf::Time deltaTime);
+    void OnUpdate(float deltaTime);
     void OnEvent(sf::Event& event);
     float distance = 1.f;
     sf::Vector2u m_ViewportSize;

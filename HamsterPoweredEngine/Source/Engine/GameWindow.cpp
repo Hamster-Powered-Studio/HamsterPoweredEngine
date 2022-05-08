@@ -1,17 +1,12 @@
-﻿#pragma once
+﻿
 #include "GameWindow.h"
-#include <functional>
 #include <iostream>
 #include "Actor.h"
-#include "imgui_stdlib.h"
 #include "Global.h"
-#include "UI/UIViewport.h"
 #include "UI/UIHierarchy.h"
 #include "Engine.h"
 #include <SFML/OpenGL.hpp>
-#include "imgui_impl_opengl2.h"
 #include "Utils/EditorColorScheme.h"
-#include "Utils/EditorColorPicker.h"
 #include <windows.h>
 #include "SceneSerializer.h"
 #include "Utils/PlatformUtils.h"
@@ -19,6 +14,7 @@
 #include "Scripts/CameraController.h"
 #include "Scripts/CloseGameCollider.h"
 #include "ScriptableLuaActor.h"
+
 
 void doSomething()
 {
@@ -29,35 +25,42 @@ void some_function() {
     std::cout << "some function!" << std::endl;
 }
 
+
 GameWindow::GameWindow()
 {
+    
     LuaEngine::lua.open_libraries(sol::lib::base);
     global::Game = this;
 
-    
-    
-    //sol::state lua;
-    
-    //lua.open_libraries(sol::lib::base);
-
-    
+    //Create the main instance window
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
-    ::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
-    window->setFramerateLimit(60);
+    //::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
+    window->setVerticalSyncEnabled(true);
     auto image = sf::Image{};
     if (image.loadFromFile("resources/icon.png"))
     {
         window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
     }
+
     
     ImGui::SFML::Init(*window, true);
+
+    //Load editor functions and utils
     if (EDITOR) editor = new EditorLayer(*this);
     
     Renderer::GetInstance();
-    Renderer::Resize(window->getSize().x, window->getSize().y);
-    m_EditorCamera.m_ViewportSize = sf::Vector2u(window->getSize().x, window->getSize().y);
+    //Renderer::Resize(window->getSize().x, window->getSize().y);
+
     
     NewEmptyScene();
+    if (!EDITOR)
+    {
+        SceneSerializer serializer(*currentScene);
+        serializer.Deserialize("assets/scenes/ForestWithScript.hpl");
+        ResizeGameView();
+    }
+    
+    
     WindowLoop();
 }
 
@@ -65,6 +68,7 @@ GameWindow::~GameWindow()
 {
     delete currentScene;
     delete window;
+    
 }
 
 void GameWindow::WindowLoop()
@@ -80,16 +84,17 @@ void GameWindow::WindowLoop()
         {
             global::event = &event;
             ImGui::SFML::ProcessEvent(event);
-            m_EditorCamera.OnEvent(event);
+            if (EDITOR) editor->m_EditorCamera.OnEvent(event);
             if (event.type == sf::Event::Closed)
                 window->close();
 
             if (event.type == sf::Event::Resized) {
                 if(!EDITOR)
-                    Renderer::Resize(window->getSize().x, window->getSize().y);
+                    ResizeGameView();
             }
         }
-        global::deltaTime = global::deltaClock.getElapsedTime();
+        global::deltaTime = global::deltaClock.getElapsedTime().asSeconds();
+        
         ImGui::SFML::Update(*window, global::deltaClock.restart());
 
 
@@ -97,7 +102,7 @@ void GameWindow::WindowLoop()
         {
             editor->OnUpdate();
             //Renderer::BeginDraw();
-            currentScene->OnUpdateRuntime(global::deltaClock.getElapsedTime());
+            //currentScene->OnUpdateRuntime(global::deltaClock.getElapsedTime());
             //Renderer::EndDraw();
         }
         else
@@ -105,16 +110,21 @@ void GameWindow::WindowLoop()
             window->clear();
 
             Renderer::BeginDraw();
-            currentScene->OnUpdateRuntime(global::deltaClock.getElapsedTime());
+            currentScene->OnUpdateRuntime(global::deltaTime);
             Renderer::EndDraw();
         }
 
 
         sf::Sprite output;
         output.setTexture(Renderer::GetView()->getTexture(), true);
+        //output.setOrigin(output.getTexture()->getSize().x / 2, output.getTexture()->getSize().y / 2);
 
         if (!EDITOR)
-        window->draw(output);
+        {
+            window->setView(sf::View((sf::FloatRect)output.getTextureRect()));
+            window->draw(output);
+        }
+            
         else
         {
             ImGui::SFML::Render(*window);
@@ -132,11 +142,29 @@ void GameWindow::WindowLoop()
 
 void GameWindow::ResizeGameView()
 {
-    if (!NDEBUG)
+    if (EDITOR)
     {
         ImVec2 view = ImGui::GetContentRegionAvail();
         Renderer::Resize(view.x, view.y);
-        m_EditorCamera.Resize(view.x, view.y);
+        editor->m_EditorCamera.Resize(view.x, view.y);
+        if (editor->m_SceneState == EditorLayer::SceneState::Play)
+        {
+            if (currentScene->mainCamera)
+            {
+                currentScene->mainCamera->Camera.setSize(view.x, view.y);
+            }
+        }
+        std::cout << "resized";
+    }
+    else
+    {
+        sf::Vector2u view = window->getSize();
+        Renderer::Resize(view.x, view.y);
+        if (currentScene->mainCamera)
+        {
+            currentScene->mainCamera->Camera.setSize(view.x, view.y);
+            
+        }
     }
     
 }
@@ -155,7 +183,7 @@ void GameWindow::NewEmptyScene()
     for (int i = 0; i < 10; i++)
         currentScene->CreateActor("Lua").AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
     
-    Cam.AddComponent<CameraComponent>().SetPrimary(true);
+    Cam.AddComponent<CameraComponent>().SetPrimary(false);
     
     Cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     Cam.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();

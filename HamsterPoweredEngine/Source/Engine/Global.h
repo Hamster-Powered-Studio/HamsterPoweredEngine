@@ -20,7 +20,7 @@ namespace global
     extern sf::Event* event;
     extern GameWindow* Game;
     extern sf::Clock deltaClock;
-    extern sf::Time deltaTime;
+    extern float deltaTime;
     extern bool isInPlay;
 
 

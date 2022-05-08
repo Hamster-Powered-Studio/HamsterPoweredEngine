@@ -4,7 +4,7 @@
 class CloseGameCollider : public ScriptableActor
 {
 public:
-    void OnUpdate(sf::Time deltaTime) override;
+    void OnUpdate(float deltaTime) override;
 
     
 };

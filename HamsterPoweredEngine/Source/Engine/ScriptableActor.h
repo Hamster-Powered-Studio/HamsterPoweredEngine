@@ -23,9 +23,9 @@ public:
 protected:
     virtual void OnCreate() {}
     virtual void OnDestroy() {}
-    virtual void OnUpdate(sf::Time deltaTime) {}
+    virtual void OnUpdate(float deltaTime) {}
     
-private:
+protected:
     Actor m_Actor;
     friend class Scene;
 };

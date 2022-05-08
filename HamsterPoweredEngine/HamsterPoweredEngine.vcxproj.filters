@@ -222,6 +222,9 @@
     <ClCompile Include="Source\Engine\ScriptableLuaActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\LuaEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\entt\entt.hpp">
@@ -354,6 +357,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\ScriptableLuaActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\LuaEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

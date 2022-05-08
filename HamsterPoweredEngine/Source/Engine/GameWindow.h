@@ -6,6 +6,7 @@
 #include "imgui-SFML.h"
 #include "Scene.h"
 
+
 class EditorLayer;
 
 class UIHierarchy;
@@ -42,10 +43,12 @@ public:
     Actor* selectedActor = nullptr;
 
     
-    EditorCamera m_EditorCamera;
+    
 
 
 private:
+
     //static inline GameWindow* GameWindow::GameWindow_m = nullptr;
     GameWindow();
+
 };

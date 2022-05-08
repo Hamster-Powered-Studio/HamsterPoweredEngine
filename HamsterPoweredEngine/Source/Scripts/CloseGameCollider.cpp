@@ -2,7 +2,7 @@
 
 #include "Components/Components.h"
 
-void CloseGameCollider::OnUpdate(sf::Time deltaTime)
+void CloseGameCollider::OnUpdate(float deltaTime)
 {
     ScriptableActor::OnUpdate(deltaTime);
     auto& Collider = GetComponent<BoxColliderComponent>();

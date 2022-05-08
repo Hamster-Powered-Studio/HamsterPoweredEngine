@@ -4,8 +4,10 @@
 #include <SFML/System/Clock.hpp>
 
 #include "HPUUID.h"
+//#include "Components/Components.h"
 #include "Engine/EditorCamera.h"
 
+struct CameraComponent;
 struct Actor;
 
 class Scene
@@ -15,8 +17,9 @@ public:
 	~Scene();
 	Actor GetByUUID(HPUUID uuid);
 
-	void OnUpdateRuntime(sf::Time deltaTime);
-	void OnUpdateEditor(sf::Time deltaTime, EditorCamera& camera);
+	void OnUpdateRuntime(float deltaTime);
+	void UpdateRelationships();
+	void OnUpdateEditor(float deltaTime, EditorCamera& camera);
 
 	Scene* get()
 	{
@@ -27,7 +30,7 @@ public:
 	Actor CreateActorWithUUID(HPUUID uuid, const std::string& name);
 	void DestroyActor(Actor actor);
 	entt::registry& Reg() { return Registry; }
-
+	CameraComponent* mainCamera = nullptr;
 private:
 	template<typename T>
 	void OnComponentAdded(Actor actor, T& component);

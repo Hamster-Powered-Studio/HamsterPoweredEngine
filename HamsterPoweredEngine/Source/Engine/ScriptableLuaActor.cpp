@@ -7,7 +7,14 @@
 #include "LuaEngine.h"
 #include "Components/Components.h"
 #include "Actor.h"
+#include "Global.h"
+#include "Components/LuaBindings.h"
+#include "iostream"
 
+ScriptableLuaActor::~ScriptableLuaActor()
+{
+    OnDestroy();
+}
 
 void ScriptableLuaActor::ReloadScripts()
 {
@@ -27,7 +34,10 @@ void ScriptableLuaActor::ReloadScripts()
                 std::ofstream ofs(script);
                 ofs << content;                                    // Fix file
                 }
-            
+
+            LuaBindings::RegisterBindings(lua);
+            lua["self"] = Actor(m_Actor);
+            lua["trans"] = &m_Actor.GetComponent<TransformComponent>();
             lua.script_file(script);
 
             lua.script("OnCreate()");
@@ -71,28 +81,14 @@ void ScriptableLuaActor::OnDestroy()
     }
 }
 
-void ScriptableLuaActor::OnUpdate(sf::Time deltaTime)
+void ScriptableLuaActor::OnUpdate(float deltaTime)
 {
     ScriptableActor::OnUpdate(deltaTime);
     if (HasComponent<LuaScriptComponent>())
     {
+        
         int index = 0;
-        //lua["OnUpdate"](deltaTime.asSeconds());
-        //lua.script("OnUpdate(" + std::to_string(deltaTime.asSeconds()) + ")");
-        lua["OnUpdate"](deltaTime.asSeconds());
-            
-        for (std::string& script : m_scripts)
-        {
-            //chaiscript::ChaiScript chaiInstance;
-            //chaiInstance.eval(script);
-            //chaiInstance.eval("OnUpdate");
-            
-            //auto Update = chai.eval<std::function<void()>>("OnUpdate");
-            //Update();
-            //lua.do_file(script);
-            //lua.script("OnUpdate()");
-            index++;
-        }
+        lua["OnUpdate"](deltaTime);
     }
 }
 

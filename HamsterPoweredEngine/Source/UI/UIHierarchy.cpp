@@ -369,7 +369,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!EditorLayer::selection.HasComponent<SpriteRendererComponent>()) if (ImGui::MenuItem("Sprite Renderer")) { EditorLayer::selection.AddComponent<SpriteRendererComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { EditorLayer::selection.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { EditorLayer::selection.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
-            if (!EditorLayer::selection.HasComponent<LuaScriptComponent>()) if (ImGui::MenuItem("GameCloser")) { EditorLayer::selection.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<LuaScriptComponent>()) if (ImGui::MenuItem("Lua Script")) { EditorLayer::selection.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>(); ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
         

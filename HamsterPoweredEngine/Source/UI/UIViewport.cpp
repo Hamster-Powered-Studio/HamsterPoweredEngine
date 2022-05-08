@@ -34,6 +34,7 @@ void UIViewport::OnImGuiRender()
 		global::Game->ResizeGameView();
 	}
 
+		
 	size = ImGui::GetWindowSize();
 
 	ImVec2 image_pos = ImGui::GetCursorScreenPos();
