@@ -28,9 +28,19 @@ public:
 
 	Actor CreateActor(const std::string& name = std::string());
 	Actor CreateActorWithUUID(HPUUID uuid, const std::string& name);
+	Actor DuplicateActor(Actor actor);
 	void DestroyActor(Actor actor);
 	entt::registry& Reg() { return Registry; }
 	CameraComponent* mainCamera = nullptr;
+
+	template<typename T>
+	std::vector<T*> GetAllComponents()
+	{
+		std::vector<T*> components;
+		Registry.view<T>().each([&](auto& component){components.push_back(&component);});
+		return components;
+	}
+	
 private:
 	template<typename T>
 	void OnComponentAdded(Actor actor, T& component);

@@ -1,26 +1,12 @@
 function OnCreate()
     print("Created a new lua script!")
     speed = 500
+    gravity = 9.8
     
 end
 
 function ValueInRange(value, min, max) 
     return (value >= min) and (value <= max)
-end
-
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
 end
 
 function Intersects(RectA, RectB)
@@ -37,19 +23,20 @@ end
 
 
 function OnUpdate(deltaTime)
+    print("E")
     xMovement = 0;
-    yMovement = 0;
+    yMovement = yMovement - gravity;
     
     if IsMouseDown(0) then
     end
-    if IsKeyDown("W") then
-        yMovement = yMovement - speed * deltaTime
+    --if IsKeyDown("W") then
+        --yMovement = yMovement - speed * deltaTime
     end
     if IsKeyDown("A") then
         xMovement = xMovement - speed * deltaTime
     end
-    if IsKeyDown("S") then
-        yMovement = yMovement + speed * deltaTime
+    --if IsKeyDown("S") then
+        --yMovement = yMovement + speed * deltaTime
     end 
     if IsKeyDown("D") then
         xMovement = xMovement + speed * deltaTime

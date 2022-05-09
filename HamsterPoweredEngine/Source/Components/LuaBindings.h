@@ -16,6 +16,8 @@ namespace LuaBindings
         if(key == "E") return sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E);
         if(key == "F") return sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F);
         if(key == "Q") return sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q);
+        if(key == "Space") return sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);
+        if(key == "Esc") return sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
         return false;
     }
 
@@ -27,11 +29,28 @@ namespace LuaBindings
        
         return false;
     }
-    
-    static void RegisterBindings(sol::state& lua)
+
+    inline BoxColliderComponent CopyBox(BoxColliderComponent& box)
     {
+        return BoxColliderComponent(box);
+    }
+    
+    static void RegisterBindings(sol::state& lua, Actor actor = {})
+    {
+        lua["Scene"] = actor.GetScene();
+        lua["Self"] = actor;
+        //std::vector<BoxColliderComponent>
+        lua.new_usertype<Scene>("ScenePiece",
+            "GetByUUID", &Scene::GetByUUID,
+            "GetAllColliders", &Scene::GetAllComponents<BoxColliderComponent>);
+        
+        lua.new_usertype<Actor>("Actor",
+            "GetTransform", &Actor::GetComponent<TransformComponent>,
+            "GetCollider", &Actor::GetComponent<BoxColliderComponent>,
+            "GetTag", &Actor::GetComponent<TagComponent>,
+            "GetRelationship", &Actor::GetComponent<RelationshipComponent>);
         lua.new_usertype<TransformComponent>("TransformComponent",
-            "GetTransform", &TransformComponent::Transform);
+            "Transform", &TransformComponent::Transform);
         lua.new_usertype<Transform2D>("Transform2D",
             "Pos", &Transform2D::Pos,
             "Rot", &Transform2D::Rot,
@@ -41,14 +60,24 @@ namespace LuaBindings
             "y", &sf::Vector2f::y);
         lua.new_usertype<BoxColliderComponent>("BoxColliderComponent",
             "IsColliding", &BoxColliderComponent::IsColliding,
-            "Size", &BoxColliderComponent::Collider,
+            "Bounds", &BoxColliderComponent::Collider,
             "OtherActor", &BoxColliderComponent::Other,
-            "Offset", &BoxColliderComponent::Offset);
+            "Offset", &BoxColliderComponent::Offset,
+            "CopyBox", &LuaBindings::CopyBox,
+            "Type", &BoxColliderComponent::Type,
+            "Active", &BoxColliderComponent::Active);
         lua.new_usertype<sf::FloatRect>("FloatRect",
             "Height", &sf::FloatRect::height,
             "Width", &sf::FloatRect::width,
             "Left", &sf::FloatRect::left,
             "Top", &sf::FloatRect::top);
+        lua.new_usertype<RelationshipComponent>("RelationshipComponent",
+            "Parent", &RelationshipComponent::Parent,
+            "Children", &RelationshipComponent::children,
+            "Offset", &RelationshipComponent::Offset,
+            "IsAttached", &RelationshipComponent::Attached);
+        lua.new_usertype<TagComponent>("TagComponent",
+            "Tag", &TagComponent::Tag);
         lua["IsMouseDown"] = &LuaBindings::IsMouseDown;
         lua["IsKeyDown"] = &LuaBindings::IsKeyDown;
         

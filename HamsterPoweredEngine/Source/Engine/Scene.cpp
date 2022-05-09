@@ -190,7 +190,7 @@ void Scene::OnUpdateRuntime(float deltaTime)
 			}
 			if (lsc.Scripts.size() > 0)
 				lsc.Instance->OnUpdate(deltaTime);
-			std::cout << 1.f / global::deltaTime << std::endl;
+			//std::cout << 1.f / global::deltaTime << std::endl;
 		});
 	}
 	
@@ -370,6 +370,11 @@ Actor Scene::CreateActorWithUUID(HPUUID uuid, const std::string& name)
 	auto& tag = actor.AddComponent<TagComponent>();
 	tag.Tag = name.empty() ? "Actor" : name;
 	return actor;
+}
+
+Actor Scene::DuplicateActor(Actor actor)
+{
+	return Actor();
 }
 
 void Scene::DestroyActor(Actor actor)

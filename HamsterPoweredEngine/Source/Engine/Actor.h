@@ -28,18 +28,34 @@ public:
     template<typename T>
     bool HasComponent() const
     {
-
         return m_Scene->Registry.any_of<T>(m_ActorHandle);
-       
     }
 
+    template<typename T>
+    static T& GetComponentStatic(Actor handle)
+    {
+        return handle.m_Scene->Registry.get<T>(handle);
+    }
+
+    template<typename T>
+    static bool HasComponentStatic(Actor handle)
+    {
+        return handle.m_Scene->Registry.any_of<T>(handle);
+    }
+    
+    
     template<typename T>
     void RemoveComponent()
     {
         m_Scene->Registry.remove<T>(m_ActorHandle);
     }
     
+    Scene* GetScene()
+    {
+        return m_Scene;
+    }
 
+    
     
     HPUUID GetUUID() const;
     

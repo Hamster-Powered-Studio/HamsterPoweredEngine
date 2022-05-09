@@ -299,6 +299,7 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				input.Collider.width = box["Collider"]["Width"].as<float>();
 				input.Collider.top = box["Collider"]["Top"].as<float>();
 				input.Collider.left = box["Collider"]["Left"].as<float>();
+				if(box["Type"]) input.Type = box["Type"].as<std::string>();
 			}
 
 			auto lua = actor["LuaScriptComponent"];

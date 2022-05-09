@@ -153,8 +153,15 @@ void UIHierarchy::DrawActorNode(Actor actor)
     bool actorDeleted = false;
     if (ImGui::BeginPopupContextItem())
     {
+        if (ImGui::MenuItem("Duplicate Actor"))
+        {
+            m_Context->DuplicateActor(EditorLayer::selection);
+        }
+        ImGui::Separator();
+
         if (ImGui::MenuItem("Destroy Actor"))
             actorDeleted = true;
+        
 
         ImGui::EndPopup();
     }
@@ -472,6 +479,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             sf::Vector2f Dims(component.Collider.width, component.Collider.height);
             ImGui::Checkbox("Active", &component.Active);
             ImGui::Checkbox("Preview", &component.Preview);
+            ImGui::InputText("Type", &component.Type);
             if (!ImGui::Checkbox("Wrap to Sprite", &component.WrapToSprite))
 
             if (DrawVec2Control("Dimensions", Dims))

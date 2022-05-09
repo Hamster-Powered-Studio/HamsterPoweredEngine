@@ -35,9 +35,9 @@ void ScriptableLuaActor::ReloadScripts()
                 ofs << content;                                    // Fix file
                 }
 
-            LuaBindings::RegisterBindings(lua);
-            lua["self"] = Actor(m_Actor);
-            lua["trans"] = &m_Actor.GetComponent<TransformComponent>();
+            LuaBindings::RegisterBindings(lua, m_Actor);
+            //lua["Self"] = Actor(m_Actor);
+            //lua["trans"] = &m_Actor.GetComponent<TransformComponent>();
             lua.script_file(script);
 
             lua.script("OnCreate()");

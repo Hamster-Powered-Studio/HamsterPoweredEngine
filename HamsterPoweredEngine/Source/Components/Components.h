@@ -132,6 +132,7 @@ struct BoxColliderComponent
 	sf::Vector2f Offset;
 	bool WrapToSprite = true;
 	bool IsColliding = false;
+	std::string Type = "Block";
 	
 	
 	BoxColliderComponent()
@@ -370,7 +371,8 @@ namespace meta
 			member("Preview", &BoxColliderComponent::Preview),
 			member("WrapToSprite", &BoxColliderComponent::WrapToSprite),
 			member("Offset", &BoxColliderComponent::Offset),
-			member("Collider", &BoxColliderComponent::Collider)
+			member("Collider", &BoxColliderComponent::Collider),
+			member("Type", &BoxColliderComponent::Type)
 		);
 	}
 }

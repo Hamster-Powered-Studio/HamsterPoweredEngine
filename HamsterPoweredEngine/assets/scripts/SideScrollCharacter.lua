@@ -1,26 +1,16 @@
 function OnCreate()
     print("Created a new lua script!")
-    speed = 500
+    speed = 100
+    yMovement = 0
+    xMovement = 0
+    gravity = 15
+    jumpheight = 6
+    jumped = false
     
 end
 
 function ValueInRange(value, min, max) 
     return (value >= min) and (value <= max)
-end
-
-function deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
-        end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-        copy = orig
-    end
-    return copy
 end
 
 function Intersects(RectA, RectB)
@@ -37,22 +27,27 @@ end
 
 
 function OnUpdate(deltaTime)
-    xMovement = 0;
-    yMovement = 0;
+    yMovement = yMovement + gravity * deltaTime;
     
     if IsMouseDown(0) then
     end
     if IsKeyDown("W") then
-        yMovement = yMovement - speed * deltaTime
+        if jumped == false then
+            yMovement = jumpheight * -1
+            jumped = true
+        end
     end
     if IsKeyDown("A") then
         xMovement = xMovement - speed * deltaTime
     end
     if IsKeyDown("S") then
-        yMovement = yMovement + speed * deltaTime
+        yMovement = yMovement + (jumpheight * 10) * deltaTime
     end 
     if IsKeyDown("D") then
         xMovement = xMovement + speed * deltaTime
+    end
+    if not(IsKeyDown("D") and IsKeyDown("A")) then
+        xMovement = xMovement * 0.8
     end
     
     local FuturePositionX = Self.GetCollider(Self).CopyBox(Self.GetCollider(Self))
@@ -71,7 +66,11 @@ function OnUpdate(deltaTime)
                     xMovement = 0
                 end
                 if (Intersects(FuturePositionY, v) and v.Type == "Block") then
+                    if yMovement > 0 then
+                        jumped = false
+                    end
                     yMovement = 0
+                    
                 end
             end
         end
