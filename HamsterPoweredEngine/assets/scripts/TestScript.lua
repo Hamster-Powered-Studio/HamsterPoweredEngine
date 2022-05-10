@@ -59,7 +59,7 @@ function OnUpdate(deltaTime)
     local FuturePositionY = Self.GetCollider(Self).CopyBox(Self.GetCollider(Self))
     FuturePositionY.Bounds.Top = FuturePositionY.Bounds.Top + yMovement
     FuturePositionX.Bounds.Left = FuturePositionX.Bounds.Left + xMovement
-
+    
     for i,v in ipairs(Scene.GetAllColliders(Scene)) do
         if v.Active then
             if (v ~= Self.GetCollider(Self)) then
@@ -76,6 +76,8 @@ function OnUpdate(deltaTime)
             end
         end
     end
+    
+    
     
     Self.GetTransform(Self).Transform.Pos.x = Self.GetTransform(Self).Transform.Pos.x + xMovement
     Self.GetTransform(Self).Transform.Pos.y = Self.GetTransform(Self).Transform.Pos.y + yMovement

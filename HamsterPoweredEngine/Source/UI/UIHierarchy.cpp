@@ -6,7 +6,7 @@
 #include <iostream>
 #include "Engine/Scene.h"
 #include "Engine/EditorLayer.h"
-#include "Scripts/CloseGameCollider.h"
+#include "Scripts/TileMapCollisionScript.h"
 #include "Scripts/CameraController.h"
 #include "Utils/PlatformUtils.h"
 
@@ -377,6 +377,8 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!EditorLayer::selection.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { EditorLayer::selection.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { EditorLayer::selection.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<LuaScriptComponent>()) if (ImGui::MenuItem("Lua Script")) { EditorLayer::selection.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<NativeScriptComponent>()) if (ImGui::MenuItem("TMCollisions")) { EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<TilemapCollisionScript>(); ImGui::CloseCurrentPopup(); }
+
             ImGui::EndPopup();
         }
         
@@ -515,8 +517,11 @@ void UIHierarchy::DrawComponents(Actor& actor)
             }
 
             ImGui::InputText("SpriteSheet", &component.Path);
-
-            
+            if (ImGui::Button("Reload Spritesheet"))
+            {
+                component.Texture.loadFromFile(component.Path);
+            }
+        
             
             double aspectRatioV = (double)component.Texture.getSize().y / (double)component.Texture.getSize().x;
             double aspectRatioH = (double)component.Texture.getSize().x / (double)component.Texture.getSize().y;
@@ -559,5 +564,32 @@ void UIHierarchy::DrawComponents(Actor& actor)
                 component.UpdateTexture(i);
             }
         }
+
+        ImGui::Text("Collision Tiles");
+        ImGui::SameLine();
+        if (ImGui::Button("Add Collider"))
+        {
+            component.Colliders.push_back(component.SelectedTile);
+        }
+        bool del = false;
+        int delint = 0;
+        for (int i = 0; i < component.Colliders.size(); i++)
+        {
+            ImGui::PushID(i);
+            std::string str = std::to_string(component.Colliders[i]);
+            if (ImGui::InputText(std::string("##").append(std::to_string(i)).c_str() , &str))
+            {
+                component.Colliders[i] = stoi(str);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Remove"))
+            {
+                del = true;
+                delint = i;
+            }
+            ImGui::PopID();
+        }
+        if (del) component.Colliders.erase( component.Colliders.begin() + delint);
+        
         });
 }

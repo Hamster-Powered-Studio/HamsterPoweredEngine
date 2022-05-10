@@ -37,17 +37,22 @@ namespace LuaBindings
     
     static void RegisterBindings(sol::state& lua, Actor actor = {})
     {
+        lua.open_libraries(sol::lib::base);
+        lua.open_libraries(sol::lib::math);
+        
         lua["Scene"] = actor.GetScene();
         lua["Self"] = actor;
         //std::vector<BoxColliderComponent>
         lua.new_usertype<Scene>("ScenePiece",
             "GetByUUID", &Scene::GetByUUID,
-            "GetAllColliders", &Scene::GetAllComponents<BoxColliderComponent>);
+            "GetAllColliders", &Scene::GetAllComponents<BoxColliderComponent>,
+            "GetAllTilemaps", &Scene::GetAllComponents<TileMapComponent>);
         
         lua.new_usertype<Actor>("Actor",
             "GetTransform", &Actor::GetComponent<TransformComponent>,
             "GetCollider", &Actor::GetComponent<BoxColliderComponent>,
             "GetTag", &Actor::GetComponent<TagComponent>,
+            "GetMoveComponent", &Actor::GetComponent<MoveComponent>,
             "GetRelationship", &Actor::GetComponent<RelationshipComponent>);
         lua.new_usertype<TransformComponent>("TransformComponent",
             "Transform", &TransformComponent::Transform);
@@ -76,8 +81,18 @@ namespace LuaBindings
             "Children", &RelationshipComponent::children,
             "Offset", &RelationshipComponent::Offset,
             "IsAttached", &RelationshipComponent::Attached);
+        lua.new_usertype<TileMapComponent>("TileMapComponent",
+            "Height", &TileMapComponent::height,
+            "Width", &TileMapComponent::width,
+            "TileHeight", &TileMapComponent::tileHeight,
+            "TileWidth", &TileMapComponent::tileWidth,
+            "Tiles", &TileMapComponent::Layout,
+            "Bounds", &TileMapComponent::Bounds,
+            "Colliders", &TileMapComponent::Colliders);
         lua.new_usertype<TagComponent>("TagComponent",
             "Tag", &TagComponent::Tag);
+        lua.new_usertype<MoveComponent>("MoveComponent",
+            "Vector", &MoveComponent::Move);
         lua["IsMouseDown"] = &LuaBindings::IsMouseDown;
         lua["IsKeyDown"] = &LuaBindings::IsKeyDown;
         

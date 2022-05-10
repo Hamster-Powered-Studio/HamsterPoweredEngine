@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Engine/ScriptableActor.h"
 
-class CloseGameCollider : public ScriptableActor
+class TilemapCollisionScript : public ScriptableActor
 {
 public:
     void OnUpdate(float deltaTime) override;

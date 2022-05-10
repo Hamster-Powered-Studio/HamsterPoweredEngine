@@ -3252,7 +3252,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 164
         - 165
         - 165
         - 165
@@ -5036,10 +5036,12 @@ Actors:
       Height: 50
       ZOrder: 0
       Visible: true
+      Colliders:
+        - 22
     BoxColliderComponent:
       Active: true
       Preview: false
-      WrapToSprite: false
+      WrapToSprite: true
       Offset:
         x: -564
         y: 154
@@ -5057,8 +5059,8 @@ Actors:
     TransformComponent:
       Transform:
         Position:
-          x: -547
-          y: -90
+          x: -536.753967
+          y: 134.394348
         Rotation: 0
         Scale:
           x: 1
@@ -5078,7 +5080,7 @@ Actors:
           y: 1
     LuaScriptComponent:
       Scripts:
-        - D:\Projects\Dev\SFML\2DFramework\GD1P03_ClassProject\HamsterPoweredEngine\HamsterPoweredEngine\assets\scripts\SideScrollCharacter.lua
+        - assets\scripts\SideScrollCharacter.lua
     CameraComponent:
       Zoom: 1
       Primary: true
@@ -5097,7 +5099,7 @@ Actors:
         y: 0
       Collider:
         Height: 24
-        Width: 18
-        Top: -102
-        Left: -556
+        Width: 24
+        Top: 122.394348
+        Left: -548.753967
       Type: Block

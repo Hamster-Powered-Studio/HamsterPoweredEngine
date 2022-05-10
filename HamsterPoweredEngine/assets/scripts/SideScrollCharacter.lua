@@ -14,6 +14,7 @@ function ValueInRange(value, min, max)
 end
 
 function Intersects(RectA, RectB)
+    
     RectALeft = RectA.Bounds.Left + RectA.Offset.x
     RectATop = RectA.Bounds.Top + RectA.Offset.y
     RectBLeft = RectB.Bounds.Left + RectB.Offset.x
@@ -25,6 +26,39 @@ function Intersects(RectA, RectB)
     return xOverlap and yOverlap
 end
 
+function GetSurroundingTiles(tile) 
+    local tiles = { 
+        [1] = {tile.x + 1, tile.y, tile.Width, tile.Height},
+        [2] = {tile.x + 1, tile.y + 1, tile.Width, tile.Height},
+        [3] = {tile.x + 1, tile.y - 1, tile.Width, tile.Height},
+        [4] = {tile.x - 1, tile.y, tile.Width, tile.Height},
+        [5] = {tile.x - 1, tile.y + 1, tile.Width, tile.Height},
+        [6] = {tile.x - 1, tile.y - 1, tile.Width, tile.Height},
+        [7] = {tile.x, tile.y + 1, tile.Width, tile.Height},
+        [8] = {tile.x, tile.y - 1, tile.Width, tile.Height}
+    }
+    return tiles
+end
+
+function GetCollisionBox(tile, tmcoords) 
+    local box = {}
+    local rect = {}
+    local off = {}
+    off.x = 0
+    off.y = 0
+    
+    rect.Left = tmcoords.x + (tile[1] * tile[3])
+    
+    rect.Top = tmcoords.y + (tile[2] * tile[4])
+    
+    rect.Width = tile[3]
+    rect.Height = tile[4]
+    
+    box.Bounds = rect
+    box.Offset = off
+
+    return box
+end
 
 function OnUpdate(deltaTime)
     yMovement = yMovement + gravity * deltaTime;
@@ -50,11 +84,12 @@ function OnUpdate(deltaTime)
         xMovement = xMovement * 0.8
     end
     
+    
     local FuturePositionX = Self.GetCollider(Self).CopyBox(Self.GetCollider(Self))
     local FuturePositionY = Self.GetCollider(Self).CopyBox(Self.GetCollider(Self))
     FuturePositionY.Bounds.Top = FuturePositionY.Bounds.Top + yMovement
     FuturePositionX.Bounds.Left = FuturePositionX.Bounds.Left + xMovement
-
+--[[
     for i,v in ipairs(Scene.GetAllColliders(Scene)) do
         if v.Active then
             if (v ~= Self.GetCollider(Self)) then
@@ -75,9 +110,74 @@ function OnUpdate(deltaTime)
             end
         end
     end
+]]--
+    
+    local PlayerBox = Self.GetCollider(Self)
+    
+    local TileMaps = Scene.GetAllTilemaps(Scene)
+    
+    
+    for i,TileMap in ipairs(TileMaps) do
+        
+        mapBounds = {}
+        mapOffset = {}
+        mapOffset.x = 0
+        mapOffset.y = 0
+        mapBounds.Bounds = TileMap.Bounds
+        mapBounds.Offset = mapOffset
+        
+        if (Intersects(mapBounds, Self.GetCollider(Self))) then
+            
+            local PlayerPos = {}
+            PlayerPos.x = Self.GetTransform(Self).Transform.Pos.x - TileMap.Bounds.Left
+            PlayerPos.y = Self.GetTransform(Self).Transform.Pos.y - TileMap.Bounds.Top
+            
+            local Tile = {}
+            Tile.x = math.floor((PlayerPos.x / TileMap.TileWidth))
+            Tile.y = math.floor(PlayerPos.y / TileMap.TileHeight)
+            Tile.Width = TileMap.TileWidth
+            Tile.Height = TileMap.TileHeight
+            
+            SurroundingTiles = GetSurroundingTiles(Tile)
+            local tilemappos = {}
+            tilemappos.x = TileMap.Bounds.Left
+            tilemappos.y = TileMap.Bounds.Top
+            
+            for j,SurroundingTile in ipairs(SurroundingTiles) do
+                --print(j)
+                local coll = GetCollisionBox(SurroundingTile, tilemappos)
+
+                if Intersects(FuturePositionY, coll) then
+                    for k,x in ipairs(TileMap.Colliders) do
+                        TestTile = TileMap.Tiles[math.floor(SurroundingTile[1] + (TileMap.Width * SurroundingTile[2]))+1]
+                        if TestTile == x then
+                            if yMovement > 0 then jumped = false end
+                            yMovement = 0
+                            
+                        end
+                        
+                    end
+                end
+                if Intersects(FuturePositionX, coll) then
+                    for k,x in ipairs(TileMap.Colliders) do
+                        TestTile = TileMap.Tiles[(SurroundingTile[1] + (TileMap.Width * SurroundingTile[2]))+1]
+                        if TestTile == x then
+                            xMovement = 0
+
+                        end
+
+                    end
+                end
+            end
+        end
+    end
+    
     
     Self.GetTransform(Self).Transform.Pos.x = Self.GetTransform(Self).Transform.Pos.x + xMovement
     Self.GetTransform(Self).Transform.Pos.y = Self.GetTransform(Self).Transform.Pos.y + yMovement
+    
+   -- Self.GetMoveComponent(Self).Vector.x = xMovement
+  --  Self.GetMoveComponent(Self).Vector.y = yMovement
     
 end
 

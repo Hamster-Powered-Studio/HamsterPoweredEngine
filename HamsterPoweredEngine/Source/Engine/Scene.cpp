@@ -35,22 +35,7 @@ Actor Scene::GetByUUID(HPUUID uuid)
 	}
 }
 
-struct PQElement
-{
-	sf::Drawable* elem;
-	float priority;
 
-	//Overload the < operator.
-	bool operator< (const PQElement &other) const
-	{
-		return priority > other.priority;
-	}
-	//Overload the > operator.
-	bool operator> (const PQElement &other) const
-	{
-		return priority < other.priority;
-	}
-};
 
 void Scene::UpdateRelationships()
 {
@@ -73,7 +58,7 @@ void Scene::UpdateRelationships()
 
 void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 {
-	std::priority_queue<PQElement> RenderQueue;
+	
 
 	{
 		Registry.view<LuaScriptComponent>().each([=](auto actor, auto& lsc)
@@ -100,10 +85,10 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 
 			if (sprite.Visible)
 			{
-				PQElement elem{};
+				RenderItem elem{};
 				elem.elem = &sprite.Sprite;
 				elem.priority = sprite.ZOrder;
-				RenderQueue.push(elem);
+				Renderer::RenderQueue.push(elem);
 			}
 		}
 
@@ -129,10 +114,10 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 			collider.previewRect.setSize({collider.Collider.width, collider.Collider.height});
 			collider.previewRect.setPosition(transform.Transform.Pos + collider.Offset);
 			collider.previewRect.setOrigin(collider.Collider.width/2, collider.Collider.height/2);
-			PQElement prev;
+			RenderItem prev;
 			prev.elem = &collider.previewRect;
 			prev.priority = 99999;
-			RenderQueue.emplace(prev);
+			Renderer::RenderQueue.emplace(prev);
 		}
 	}
 		
@@ -144,23 +129,23 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 
 			if (tm.Visible)
 			{
-				PQElement element{};
+				RenderItem element{};
 				element.elem = &tm.map;
 				element.priority = tm.ZOrder;
-				RenderQueue.push(element);
+				Renderer::RenderQueue.push(element);
 			}
 		}
 
-		while (!RenderQueue.empty())
+		while (!Renderer::RenderQueue.empty())
 		{
-			Renderer::Draw(*RenderQueue.top().elem, &camera);
-			RenderQueue.pop();
+			Renderer::Draw(*Renderer::RenderQueue.top().elem, &camera);
+			Renderer::RenderQueue.pop();
 		}
 }
 
 void Scene::OnUpdateRuntime(float deltaTime)
 {
-	std::priority_queue<PQElement> RenderQueue;
+	std::priority_queue<RenderItem> RenderQueue;
 
 	//Update Scripts
 	{
@@ -221,10 +206,10 @@ void Scene::OnUpdateRuntime(float deltaTime)
 				collider.previewRect.setSize({collider.Collider.width, collider.Collider.height});
 				collider.previewRect.setPosition(transform.Transform.Pos + collider.Offset);
 				collider.previewRect.setOrigin(collider.Collider.width/2, collider.Collider.height/2);
-				PQElement prev;
+				RenderItem prev;
 				prev.elem = &collider.previewRect;
 				prev.priority = 99999;
-				RenderQueue.emplace(prev);
+				Renderer::RenderQueue.emplace(prev);
 			}
 
 			//if (move.Move.x == 0 && move.Move.y == 0) continue;
@@ -320,10 +305,10 @@ void Scene::OnUpdateRuntime(float deltaTime)
 
 			if (sprite.Visible)
 			{
-				PQElement elem{};
+				RenderItem elem{};
 				elem.elem = &sprite.Sprite;
 				elem.priority = sprite.ZOrder;
-				RenderQueue.push(elem);
+				Renderer::RenderQueue.push(elem);
 			}
 			
 		}
@@ -333,20 +318,24 @@ void Scene::OnUpdateRuntime(float deltaTime)
 		{
 			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
 			tm.map.setPosition(transform.Transform.Pos);
-
+			sf::Vector2f boundsSize((float)tm.width * (float)tm.tileWidth, (float)tm.height * (float)tm.tileHeight);
+			sf::Vector2f boundsPos(transform.Transform.Pos.x - (boundsSize.x / 2), transform.Transform.Pos.y - (boundsSize.y / 2));
+			sf::FloatRect bounds(boundsPos, boundsSize);
+			tm.Bounds = bounds;
+			
 			if (tm.Visible)
 			{
-				PQElement element{};
+				RenderItem element{};
 				element.elem = &tm.map;
 				element.priority = tm.ZOrder;
-				RenderQueue.push(element);
+				Renderer::RenderQueue.push(element);
 			}
 		}
 
-	while (!RenderQueue.empty())
+	while (!Renderer::RenderQueue.empty())
 		{
-			Renderer::Draw(*RenderQueue.top().elem, &mainCamera->Camera);
-			RenderQueue.pop();
+			Renderer::Draw(*Renderer::RenderQueue.top().elem, &mainCamera->Camera);
+			Renderer::RenderQueue.pop();
 		}
 	}
 	

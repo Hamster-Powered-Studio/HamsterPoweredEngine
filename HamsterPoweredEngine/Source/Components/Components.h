@@ -168,6 +168,8 @@ struct TileMapComponent
 	float ZOrder = 0;
 	bool Visible = true;
 	std::vector<int> Layout;
+	std::vector<int> Colliders;
+	sf::FloatRect Bounds;
 
 	TileMapComponent()
 	{
@@ -348,7 +350,8 @@ namespace meta
 			member("Width", &TileMapComponent::width),
 			member("Height", &TileMapComponent::height),
 			member("ZOrder", &TileMapComponent::ZOrder),
-			member("Visible", &TileMapComponent::Visible)
+			member("Visible", &TileMapComponent::Visible),
+			member("Colliders", &TileMapComponent::Colliders)
 		);
 	}
 

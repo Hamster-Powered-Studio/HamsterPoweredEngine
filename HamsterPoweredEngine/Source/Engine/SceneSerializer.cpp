@@ -284,6 +284,7 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				input.tileHeight = tmComponent["TileHeight"].as<int>();
 				if(tmComponent["Visible"]) input.Visible = tmComponent["Visible"].as<bool>();
 				if(tmComponent["ZOrder"]) input.ZOrder = tmComponent["ZOrder"].as<float>();
+				if(tmComponent["Colliders"]) input.Colliders = tmComponent["Colliders"].as<std::vector<int>>();
 				input.Load();
 			}
 

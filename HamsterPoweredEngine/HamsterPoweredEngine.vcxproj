@@ -148,7 +148,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClCompile Include="Source\Engine\HPUUID.cpp" />
     <ClCompile Include="Source\Engine\ScriptableLuaActor.cpp" />
     <ClCompile Include="Source\Scripts\CameraController.cpp" />
-    <ClCompile Include="Source\Scripts\CloseGameCollider.cpp" />
+    <ClCompile Include="Source\Scripts\TileMapCollisionScript.cpp" />
     <ClCompile Include="Source\UI\ImGuiElement.cpp" />
     <ClCompile Include="Source\UI\UIHierarchy.cpp" />
     <ClCompile Include="Source\UI\UIViewport.cpp" />
@@ -196,7 +196,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Engine\ScriptableActor.h" />
     <ClInclude Include="Source\Engine\ScriptableLuaActor.h" />
     <ClInclude Include="Source\Scripts\CameraController.h" />
-    <ClInclude Include="Source\Scripts\CloseGameCollider.h" />
+    <ClInclude Include="Source\Scripts\TileMapCollisionScript.h" />
     <ClInclude Include="Source\UI\ImGuiElement.h" />
     <ClInclude Include="Source\UI\UIHierarchy.h" />
     <ClInclude Include="Source\UI\UIViewport.h" />
@@ -205,6 +205,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Utils\PlatformUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\scripts\SideScrollCharacter.lua" />
     <Content Include="assets\scripts\TestScript.lua" />
     <Content Include="assets\scripts\TestScript2.lua" />
     <Content Include="assets\scripts\TestScript3.lua" />

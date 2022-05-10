@@ -8,7 +8,7 @@ Actors:
     TransformComponent:
       Transform:
         Position:
-          x: -539
+          x: -717
           y: 0
         Rotation: 0
         Scale:
@@ -42,7 +42,7 @@ Actors:
     BoxColliderComponent:
       Active: true
       Preview: false
-      WrapToSprite: true
+      WrapToSprite: false
       Offset:
         x: 0
         y: 0
@@ -50,7 +50,7 @@ Actors:
         Height: 24
         Width: 24
         Top: -12
-        Left: -551
+        Left: -729
       Type: Block
   - Actor: 5646278765350459925
     IDComponent:
@@ -61,7 +61,7 @@ Actors:
       Transform:
         Position:
           x: 0
-          y: 0
+          y: 93
         Rotation: 0
         Scale:
           x: 1
@@ -2803,7 +2803,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 123
         - 165
         - 165
         - 165
@@ -2903,7 +2903,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 123
         - 165
         - 165
         - 165
@@ -3003,7 +3003,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 123
         - 165
         - 165
         - 165
@@ -3103,7 +3103,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 123
         - 165
         - 165
         - 165
@@ -3203,7 +3203,7 @@ Actors:
         - 165
         - 165
         - 165
-        - 165
+        - 123
         - 165
         - 165
         - 165
@@ -3297,14 +3297,14 @@ Actors:
         - 122
         - 122
         - 123
+        - 163
         - 165
         - 165
         - 165
         - 165
         - 165
-        - 165
-        - 165
-        - 165
+        - 123
+        - 164
         - 165
         - 165
         - 165
@@ -3409,7 +3409,7 @@ Actors:
         - 166
         - 166
         - 165
-        - 165
+        - 122
         - 165
         - 165
         - 165
@@ -5088,16 +5088,7 @@ Actors:
       Height: 50
       ZOrder: 0
       Visible: true
-    BoxColliderComponent:
-      Active: true
-      Preview: true
-      WrapToSprite: false
-      Offset:
-        x: -564
-        y: 154
-      Collider:
-        Height: 15
-        Width: 154
-        Top: -7.5
-        Left: -77
-      Type: Block
+      Colliders:
+        - 22
+        - 123
+        - 122

@@ -12,7 +12,7 @@
 #include "Utils/PlatformUtils.h"
 #include "Engine/EditorLayer.h"
 #include "Scripts/CameraController.h"
-#include "Scripts/CloseGameCollider.h"
+#include "Scripts/TileMapCollisionScript.h"
 #include "ScriptableLuaActor.h"
 
 

@@ -22,6 +22,8 @@ void ScriptableLuaActor::ReloadScripts()
     {
         if (!GetComponent<LuaScriptComponent>().Scripts.size() > 0) return;
         auto& script = GetComponent<LuaScriptComponent>().Scripts[0];
+
+
         
         std::ifstream ifs(script);
         if (ifs)
