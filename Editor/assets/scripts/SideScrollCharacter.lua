@@ -1,10 +1,10 @@
 function OnCreate()
-    print("Created a new lua script!")
     Attributes = Self.GetAttributes(Self).Attributes
     yMovement = 0
     xMovement = 0
     jumped = false
     firstIteration = true;
+    alreadyClicked = false;
 end
 
 function math.round(val)
@@ -103,9 +103,16 @@ function OnUpdate(deltaTime)
     
     if firstIteration then BeginPlay() end
     yMovement = yMovement + Attributes.Gravity * deltaTime;
-    
+
     if IsMouseDown(0) then
+        if not alreadyClicked then
+            
+            alreadyClicked = true
+        end
+    else
+        alreadyClicked = false
     end
+    
     if IsKeyDown("W") then
         if jumped == false then
             yMovement = Attributes.JumpHeight * -1
@@ -140,7 +147,7 @@ function OnUpdate(deltaTime)
                     break
                 end
                 if (Intersects(Self.GetCollider(Self), v) and v.Type == "Kill") then
-                    ReturnToSpawn()
+                    KillPlayer()
                     yMovement = 0
                     break
                 end

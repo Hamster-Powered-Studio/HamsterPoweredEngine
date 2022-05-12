@@ -14,7 +14,7 @@ public:
     }
 
     ~ScriptableLuaActor();
-    void ReloadScripts();
+    virtual void ReloadScripts();
     
     void OnCreate() override;
     void OnDestroy() override;
@@ -22,10 +22,10 @@ public:
 
     void BindLuaFunctions();
 
-    
+    sol::state lua;
 private:
     std::vector<std::string> m_scripts;
     std::function<void()> Update;
-    sol::state& lua = LuaEngine::lua;
+    
     
 };

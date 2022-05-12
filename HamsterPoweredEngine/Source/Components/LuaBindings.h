@@ -49,7 +49,9 @@ namespace LuaBindings
             "GetAllTilemaps", &Scene::GetAllComponents<TileMapComponent>,
             "FindByName", &Scene::FindByName,
             "OpenLevel", &Scene::OpenLevel,
-            "GetGameState", &Scene::GetGameState);
+            "GetGameState", &Scene::GetGameState,
+            "SpawnProjectile", &Scene::SpawnProjectile,
+            "DestroyActor", &Scene::AddToDestroyList);
         lua.new_usertype<GameState>("GameStateObj",
             "Lives", &GameState::Lives,
             "Score", &GameState::Score);

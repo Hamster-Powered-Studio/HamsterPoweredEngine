@@ -145,6 +145,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClCompile Include="Source\Engine\GameWindow.cpp" />
     <ClCompile Include="Source\Engine\Global.cpp" />
     <ClCompile Include="Source\Engine\LuaEngine.cpp" />
+    <ClCompile Include="Source\Engine\ProjectileLuaActor.cpp" />
     <ClCompile Include="Source\Engine\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Scene.cpp" />
     <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
@@ -194,6 +195,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Engine\GameWindow.h" />
     <ClInclude Include="Source\Engine\Global.h" />
     <ClInclude Include="Source\Engine\LuaEngine.h" />
+    <ClInclude Include="Source\Engine\ProjectileLuaActor.h" />
     <ClInclude Include="Source\Engine\Renderer.h" />
     <ClInclude Include="Source\Engine\Scene.h" />
     <ClInclude Include="Source\Engine\SceneSerializer.h" />
@@ -212,6 +214,8 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\scripts\KillBox.lua" />
+    <Content Include="assets\scripts\ProjectileMovement.lua" />
+    <Content Include="assets\scripts\Shooter.lua" />
     <Content Include="assets\scripts\SideScrollCharacter.lua" />
     <Content Include="assets\scripts\TestScript.lua" />
     <Content Include="assets\scripts\TestScript2.lua" />

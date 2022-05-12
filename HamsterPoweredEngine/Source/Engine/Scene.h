@@ -21,6 +21,7 @@ public:
 	void OnUpdateRuntime(float deltaTime);
 	void UpdateRelationships();
 	void OnUpdateEditor(float deltaTime, EditorCamera& camera);
+	Actor SpawnProjectile(float xpos, float ypos, float xspeed, float yspeed);
 
 	Scene* get()
 	{
@@ -34,6 +35,7 @@ public:
 	GameState& GetGameState();
 	void OpenLevel(std::string path);
 	void DestroyActor(Actor actor);
+	void AddToDestroyList(Actor actor);
 	entt::registry& Reg() { return Registry; }
 	CameraComponent* mainCamera = nullptr;
 	
@@ -48,7 +50,7 @@ public:
 private:
 	template<typename T>
 	void OnComponentAdded(Actor actor, T& component);
-
+	std::vector<entt::entity> destroyList;
 private:
 	entt::registry Registry;
 	

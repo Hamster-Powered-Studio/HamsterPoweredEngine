@@ -7,6 +7,7 @@
 #include "Engine.h"
 //#include "Global.h"
 #include "Global.h"
+#include "ProjectileLuaActor.h"
 #include "Components/Components.h"
 #include "Engine/HPUUID.h"
 
@@ -146,6 +147,28 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 		}
 }
 
+Actor Scene::SpawnProjectile(float xpos, float ypos, float xspeed, float yspeed)
+{
+	Actor proj = CreateActor("Projectile");
+	auto& spr = proj.AddComponent<SpriteRendererComponent>();
+	auto& transform = proj.GetComponent<TransformComponent>();
+	auto& script = proj.AddComponent<LuaScriptComponent>();
+	auto& collider = proj.AddComponent<BoxColliderComponent>();
+	
+
+	transform.Transform.Pos = sf::Vector2f(xpos, ypos);
+	transform.Transform.Scale = sf::Vector2f(0.05, 0.05);
+	collider.Type = "Kill";
+	collider.WrapToSprite = false;
+	collider.Collider.width = 10;
+	collider.Collider.height = 10;
+	script.Bind<ScriptableLuaActor>();
+	script.Scripts.push_back("assets/scripts/ProjectileMovement.lua");
+	
+	return proj;
+}
+
+
 void Scene::OnUpdateRuntime(float deltaTime)
 {
 	std::priority_queue<RenderItem> RenderQueue;
@@ -249,34 +272,6 @@ void Scene::OnUpdateRuntime(float deltaTime)
 			if (!screen.intersects(collider.Collider)) continue;
 			
 			
-			sf::FloatRect futureColliderLR(collider.Collider.left + move.Move.x, collider.Collider.top, collider.Collider.width, collider.Collider.height);
-			sf::FloatRect futureColliderUD(collider.Collider.left, collider.Collider.top + move.Move.y, collider.Collider.width, collider.Collider.height);
-			
-			if (collider.Active)
-			{
-				for (auto otheractor : view)
-				{
-					if(otheractor == actor) continue;
-					const auto& othercollider = view.get<BoxColliderComponent>(otheractor);
-					if (othercollider.Active)
-					{
-						if (futureColliderLR.intersects(othercollider.Collider))
-						{
-							move.Move.x = 0;
-							collider.IsColliding = true;
-							collider.Other = Actor{otheractor, this};
-							
-						}
-						if (futureColliderUD.intersects(othercollider.Collider))
-						{
-							collider.IsColliding = true;
-							move.Move.y = 0;
-							collider.Other = Actor{otheractor, this};
-						}
-						if (collider.IsColliding == false) collider.Other = {}; 
-					}
-				}
-			}
 		}
 	}
 
@@ -372,8 +367,12 @@ void Scene::OnUpdateRuntime(float deltaTime)
 			Renderer::RenderQueue.pop();
 		}
 	}
-	
-	
+
+	for (int i = 0; i < destroyList.size(); i++)
+	{
+		DestroyActor(Actor(destroyList[i], this));
+	}
+	destroyList.clear();
 }
 
 
@@ -384,7 +383,6 @@ Actor Scene::CreateActor(const std::string& name)
 
 Actor Scene::CreateActorWithUUID(HPUUID uuid, const std::string& name)
 {
-	std::cout << "ActorSpawned!";
 	Actor actor = { Registry.create(), this };
 	actor.AddComponent<IDComponent>(uuid);
 	actor.AddComponent<TransformComponent>();
@@ -408,7 +406,6 @@ Actor Scene::FindByName(std::string name)
 		auto& tag = view.get<TagComponent>(i);
 		if(name == tag.Tag)
 		{
-			std::cout << "Found!";
 			return Actor(i, this);
 			
 		}
@@ -430,6 +427,11 @@ void Scene::DestroyActor(Actor actor)
 {
 	if (Registry.valid(actor))
 		Registry.destroy(actor);
+}
+
+void Scene::AddToDestroyList(Actor actor)
+{
+	destroyList.push_back(actor);
 }
 
 template<typename T>
