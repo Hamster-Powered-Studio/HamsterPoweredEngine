@@ -46,16 +46,30 @@ namespace LuaBindings
         lua.new_usertype<Scene>("ScenePiece",
             "GetByUUID", &Scene::GetByUUID,
             "GetAllColliders", &Scene::GetAllComponents<BoxColliderComponent>,
-            "GetAllTilemaps", &Scene::GetAllComponents<TileMapComponent>);
-        
+            "GetAllTilemaps", &Scene::GetAllComponents<TileMapComponent>,
+            "FindByName", &Scene::FindByName,
+            "OpenLevel", &Scene::OpenLevel,
+            "GetGameState", &Scene::GetGameState);
+        lua.new_usertype<GameState>("GameStateObj",
+            "Lives", &GameState::Lives,
+            "Score", &GameState::Score);
         lua.new_usertype<Actor>("Actor",
             "GetTransform", &Actor::GetComponent<TransformComponent>,
             "GetCollider", &Actor::GetComponent<BoxColliderComponent>,
             "GetTag", &Actor::GetComponent<TagComponent>,
             "GetMoveComponent", &Actor::GetComponent<MoveComponent>,
-            "GetRelationship", &Actor::GetComponent<RelationshipComponent>);
+            "GetRelationship", &Actor::GetComponent<RelationshipComponent>,
+            "GetAttributes", &Actor::GetComponent<AttributesComponent>,
+            "GetSpriteRenderer", &Actor::GetComponent<SpriteRendererComponent>);
         lua.new_usertype<TransformComponent>("TransformComponent",
             "Transform", &TransformComponent::Transform);
+        lua.new_usertype<SpriteRendererComponent>("SpriteRendererComponent",
+            "Sprite", &SpriteRendererComponent::Sprite,
+            "Visible", &SpriteRendererComponent::Visible,
+            "ZOrder", &SpriteRendererComponent::ZOrder,
+            "SetSprite", &SpriteRendererComponent::SetSprite);
+        lua.new_usertype<AttributesComponent>("AttributesComponent",
+            "Attributes", &AttributesComponent::Attributes);
         lua.new_usertype<Transform2D>("Transform2D",
             "Pos", &Transform2D::Pos,
             "Rot", &Transform2D::Rot,

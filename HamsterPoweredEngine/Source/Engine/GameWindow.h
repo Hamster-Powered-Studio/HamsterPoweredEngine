@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "Scene.h"
+#include "Engine/GameState.h"
 
 
 class EditorLayer;
@@ -42,12 +43,13 @@ public:
 
     Actor* selectedActor = nullptr;
 
+    bool DebugWindow = false;
     
+    void OpenLevel(std::string path);
+    GameState GameState;
     
-
-
 private:
-
+    std::string levelToOpen = "";
     //static inline GameWindow* GameWindow::GameWindow_m = nullptr;
     GameWindow();
 

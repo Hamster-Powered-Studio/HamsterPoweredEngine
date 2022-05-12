@@ -6,6 +6,7 @@
 #include "HPUUID.h"
 //#include "Components/Components.h"
 #include "Engine/EditorCamera.h"
+#include "Engine/GameState.h"
 
 struct CameraComponent;
 struct Actor;
@@ -29,10 +30,13 @@ public:
 	Actor CreateActor(const std::string& name = std::string());
 	Actor CreateActorWithUUID(HPUUID uuid, const std::string& name);
 	Actor DuplicateActor(Actor actor);
+	Actor FindByName(std::string name);
+	GameState& GetGameState();
+	void OpenLevel(std::string path);
 	void DestroyActor(Actor actor);
 	entt::registry& Reg() { return Registry; }
 	CameraComponent* mainCamera = nullptr;
-
+	
 	template<typename T>
 	std::vector<T*> GetAllComponents()
 	{

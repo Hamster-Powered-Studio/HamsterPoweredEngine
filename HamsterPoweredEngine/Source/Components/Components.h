@@ -1,5 +1,6 @@
 #pragma once
 
+#include <any>
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "MetaStuff/Meta.h"
@@ -50,6 +51,45 @@ struct TransformComponent
 	operator const Transform2D& () const { return Transform; }
 };
 
+struct AttributesComponent
+{
+	std::unordered_map<std::string, std::variant<int, float, std::string>> Attributes;
+
+	enum class Types { Int, Float, String };
+	void AddAttribute(std::string name, std::variant<int, float, std::string> value)
+	{
+		Attributes[name] = value;
+	}
+
+	template <typename T>
+	void ChangeAttributeType(std::string name)
+	{
+		Attributes[name] = T();
+	}
+
+	void RemoveAttribute(std::string name)
+	{
+		Attributes.erase(name);
+	}
+	
+	std::variant<int, float, std::string>& GetAttribute(std::string name)
+	{
+		return Attributes[name];
+	}
+	template<typename T>
+	T& GetAttribute(std::string name)
+	{
+		T& att = std::get<T>(Attributes[name]);
+
+		return att;
+	}
+	
+	
+	AttributesComponent() = default;
+	AttributesComponent(const AttributesComponent&) = default;
+	
+};
+
 struct SpriteRendererComponent
 {
 	sf::Sprite Sprite;
@@ -59,19 +99,28 @@ struct SpriteRendererComponent
 	float ZOrder = 0;
 	bool Visible = true;
 
+	bool SetSprite(std::string path)
+	{
+		if (Texture.loadFromFile(path))
+		{
+			Path = path;
+			Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
+			Sprite.setTexture(Texture, true);
+			return true;
+		}
+		return false;
+	}
+	
 	SpriteRendererComponent()
 	{
 		Texture.loadFromFile(Path);
-		Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
 		Sprite.setTexture(Texture, true);
+		Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
 	}
 	SpriteRendererComponent(const SpriteRendererComponent&) = default;
 	SpriteRendererComponent(const sf::Sprite other, const sf::Texture texture, const sf::String path,  const sf::Color tint) : Sprite(other), Texture(texture), Path(path), Tint(tint) {}
 	SpriteRendererComponent(const std::string path) {
-		Texture.loadFromFile(path);
-		Path = path;
-		Sprite.setOrigin((float)Texture.getSize().x / 2.f, (float)Texture.getSize().y / 2.f);
-		Sprite.setTexture(Texture, true);
+		SetSprite(path);
 	}
 
 	//Overload the < operator.
@@ -376,6 +425,14 @@ namespace meta
 			member("Offset", &BoxColliderComponent::Offset),
 			member("Collider", &BoxColliderComponent::Collider),
 			member("Type", &BoxColliderComponent::Type)
+		);
+	}
+
+	template<>
+	inline auto registerMembers<AttributesComponent>()
+	{
+		return members(
+			member("Attributes", &AttributesComponent::Attributes)
 		);
 	}
 }

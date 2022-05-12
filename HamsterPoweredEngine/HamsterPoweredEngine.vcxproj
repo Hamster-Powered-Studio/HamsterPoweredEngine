@@ -67,9 +67,11 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Editor\resources"
-xcopy /E /Y "$(ProjectDir)assets" "$(SolutionDir)Editor\assets"
-
-</Command>
+   xcopy /E /Y "$(ProjectDir)assets" "$(SolutionDir)Editor\assets"
+   xcopy /I /Y "$(ProjectDir)imgui.ini" "$(SolutionDir)Editor"
+   
+   
+   </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Game|Win32'">
@@ -139,6 +141,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClCompile Include="Source\Engine\Actor.cpp" />
     <ClCompile Include="Source\Engine\EditorCamera.cpp" />
     <ClCompile Include="Source\Engine\EditorLayer.cpp" />
+    <ClCompile Include="Source\Engine\GameState.cpp" />
     <ClCompile Include="Source\Engine\GameWindow.cpp" />
     <ClCompile Include="Source\Engine\Global.cpp" />
     <ClCompile Include="Source\Engine\LuaEngine.cpp" />
@@ -147,6 +150,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClCompile Include="Source\Engine\SceneSerializer.cpp" />
     <ClCompile Include="Source\Engine\HPUUID.cpp" />
     <ClCompile Include="Source\Engine\ScriptableLuaActor.cpp" />
+    <ClCompile Include="Source\Engine\test.cpp" />
     <ClCompile Include="Source\Scripts\CameraController.cpp" />
     <ClCompile Include="Source\Scripts\TileMapCollisionScript.cpp" />
     <ClCompile Include="Source\UI\ImGuiElement.cpp" />
@@ -186,6 +190,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Engine\EditorCamera.h" />
     <ClInclude Include="Source\Engine\EditorLayer.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
+    <ClInclude Include="Source\Engine\GameState.h" />
     <ClInclude Include="Source\Engine\GameWindow.h" />
     <ClInclude Include="Source\Engine\Global.h" />
     <ClInclude Include="Source\Engine\LuaEngine.h" />
@@ -195,6 +200,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Engine\HPUUID.h" />
     <ClInclude Include="Source\Engine\ScriptableActor.h" />
     <ClInclude Include="Source\Engine\ScriptableLuaActor.h" />
+    <ClInclude Include="Source\Engine\test.h" />
     <ClInclude Include="Source\Scripts\CameraController.h" />
     <ClInclude Include="Source\Scripts\TileMapCollisionScript.h" />
     <ClInclude Include="Source\UI\ImGuiElement.h" />
@@ -205,6 +211,7 @@ xcopy /E /Y "$(ProjectDir)resources" "$(SolutionDir)Game\resources"</Command>
     <ClInclude Include="Source\Utils\PlatformUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\scripts\KillBox.lua" />
     <Content Include="assets\scripts\SideScrollCharacter.lua" />
     <Content Include="assets\scripts\TestScript.lua" />
     <Content Include="assets\scripts\TestScript2.lua" />

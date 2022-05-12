@@ -48,6 +48,45 @@ namespace YAML {
 				return true;
 			}
 		};
+
+	template<>
+	struct convert<std::unordered_map<std::string, std::variant<int, float, std::string>>>
+		{
+			static Node encode(const std::unordered_map<std::string, std::variant<int, float, std::string>>& rhs)
+			{
+				Node node;
+				
+				return node;
+			}
+
+			static bool decode(const Node& node, std::unordered_map<std::string, std::variant<int, float, std::string>>& rhs)
+			{
+				for (auto& att : node)
+				{
+					std::string name = att.first.as<std::string>();
+					const YAML::Node& value = att.second;
+					int type = value["Type"].as<int>();
+					std::variant<int, float, std::string> avalue;
+					switch (type)
+					{
+					case 0:
+						avalue = value["Value"].as<int>();
+						break;
+					case 1:
+						avalue = value["Value"].as<float>();
+						break;
+					case 2:
+						avalue = value["Value"].as<std::string>();
+						break;
+					}
+					
+					rhs[name] = avalue;
+					
+				}
+				
+				return true;
+			}
+		};
 	
 	template<>
 	struct convert<sf::Color>
@@ -87,6 +126,39 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const HPUUID& id)
 	std::ostringstream oss;
 	oss << id;
 	out << oss.str();
+	return out;
+}
+
+YAML::Emitter& operator<<(YAML::Emitter& out, const std::unordered_map<std::string, std::variant<int, float, std::string>>& map)
+{
+	out << YAML::BeginMap;
+	for (auto& i : map)
+	{
+		out << YAML::Key << i.first << YAML::Value;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Type" << YAML::Value << i.second.index();
+		
+		switch (i.second.index())
+		{
+		case 0:
+			out << YAML::Key << "Value" << YAML::Value << std::get<0>(i.second);
+			break;
+		case 1:
+			out << YAML::Key << "Value" << YAML::Value << std::get<1>(i.second);
+			break;
+		case 2:
+			out << YAML::Key << "Value" << YAML::Value << std::get<2>(i.second);
+			break;
+		default:
+			out << YAML::Key << "Value" << YAML::Value << "Broken";
+			break;
+		}
+		out << YAML::EndMap;
+		
+		
+		
+	}
+	out << YAML::EndMap;
 	return out;
 }
 
@@ -148,6 +220,7 @@ void SceneSerializer::SerializeActor(YAML::Emitter& out, Actor actor)
 		SerializeComponent<SpriteRendererComponent>(out, &actor);
 		SerializeComponent<TileMapComponent>(out, &actor);
 		SerializeComponent<BoxColliderComponent>(out, &actor);
+		SerializeComponent<AttributesComponent>(out, &actor);
 		out << YAML::EndMap;
 	}
 	else out << "null";
@@ -263,11 +336,11 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 			auto spriteComponent = actor["SpriteRendererComponent"];
 			if (spriteComponent)
 			{
-				auto& sprite = deserializedActor.AddComponent<SpriteRendererComponent>();
+				auto& sprite = deserializedActor.AddComponent<SpriteRendererComponent>(spriteComponent["Texture"].as<std::string>());
 				sprite.Path = spriteComponent["Texture"].as<std::string>();
 				sprite.Visible = spriteComponent["Visible"].as<bool>();
 				sprite.Tint = spriteComponent["Tint"].as<sf::Color>();
-				sprite.Texture.loadFromFile(sprite.Path);
+				//sprite.Texture.loadFromFile(sprite.Path);
 				sprite.Sprite.setTexture(sprite.Texture, true);
 				if(spriteComponent["ZOrder"]) sprite.ZOrder = spriteComponent["ZOrder"].as<float>();
 			}
@@ -309,6 +382,13 @@ Actor SceneSerializer::DeserializeActor(YAML::detail::iterator_value& actor)
 				auto& input = deserializedActor.AddComponent<LuaScriptComponent>();
 				input.Bind<ScriptableLuaActor>();
 				input.Scripts = lua["Scripts"].as<std::vector<std::string>>();
+			}
+
+			auto att = actor["AttributesComponent"];
+			if (att)
+			{
+				auto& input = deserializedActor.AddComponent<AttributesComponent>();
+				input.Attributes = att["Attributes"].as<std::unordered_map<std::string, std::variant<int, float, std::string>>>();
 			}
 	return deserializedActor;
 }

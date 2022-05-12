@@ -193,6 +193,9 @@ void EditorLayer::OnUpdate()
     style.WindowMinSize.x = 32;
     RenderUI();
 
+    
+
+    
     if (uiviewport)
     {
         if (uiviewport->focused)

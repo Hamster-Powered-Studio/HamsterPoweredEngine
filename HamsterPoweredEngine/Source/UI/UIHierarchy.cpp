@@ -10,6 +10,28 @@
 #include "Scripts/CameraController.h"
 #include "Utils/PlatformUtils.h"
 
+constexpr unsigned int hash(const char *s, int off = 0) {                        
+    return !s[off] ? 5381 : (hash(s, off+1)*33) ^ s[off];                           
+}    
+
+std::string convertInt(int i)
+{
+    std::string prev;
+    switch (i)
+    {
+    case 0:
+        prev = "Int";
+        break;
+    case 1:
+        prev = "Float";
+        break;
+    case 2:
+        prev = "String";
+        break;
+    }
+    return prev;
+}
+
 UIHierarchy::UIHierarchy(Scene& scene) : m_Context(&scene)
 {
 }
@@ -377,7 +399,7 @@ void UIHierarchy::DrawComponents(Actor& actor)
             if (!EditorLayer::selection.HasComponent<TileMapComponent>()) if (ImGui::MenuItem("Tilemap")) { EditorLayer::selection.AddComponent<TileMapComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<BoxColliderComponent>()) if (ImGui::MenuItem("Box Collider")) { EditorLayer::selection.AddComponent<BoxColliderComponent>(); ImGui::CloseCurrentPopup(); }
             if (!EditorLayer::selection.HasComponent<LuaScriptComponent>()) if (ImGui::MenuItem("Lua Script")) { EditorLayer::selection.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>(); ImGui::CloseCurrentPopup(); }
-            if (!EditorLayer::selection.HasComponent<NativeScriptComponent>()) if (ImGui::MenuItem("TMCollisions")) { EditorLayer::selection.AddComponent<NativeScriptComponent>().Bind<TilemapCollisionScript>(); ImGui::CloseCurrentPopup(); }
+            if (!EditorLayer::selection.HasComponent<AttributesComponent>()) if (ImGui::MenuItem("Attributes")) { EditorLayer::selection.AddComponent<AttributesComponent>(); ImGui::CloseCurrentPopup(); }
 
             ImGui::EndPopup();
         }
@@ -451,6 +473,121 @@ void UIHierarchy::DrawComponents(Actor& actor)
             }
         });
 
+        DrawComponent<AttributesComponent>("Attributes", actor, [](AttributesComponent& component)
+        {
+            if (ImGui::Button("Add Attribute"))
+            {
+                component.AddAttribute("New Attribute", std::string("HEllo!"));
+            }
+            std::string removeKey = "";
+            int types[] = {0, 1, 2};
+            int index = 0;
+            float MaxWidth = ImGui::GetContentRegionAvail().x;
+            float tenth =  MaxWidth / 10;
+            ImGui::Columns(3, nullptr, false);
+            ImGui::SetColumnWidth(0, 3*tenth);
+            ImGui::SetColumnWidth(1, 4*tenth);
+            ImGui::SetColumnWidth(2, 3*tenth);
+            ImGui::SetColumnOffset(0, 0);
+            ImGui::SetColumnOffset(1, ImGui::GetColumnWidth(0));
+            ImGui::SetColumnOffset(2, ImGui::GetColumnWidth(0) + ImGui::GetColumnWidth(1));
+            ImGui::Text("Type");
+            ImGui::NextColumn();
+            ImGui::Text("Name");
+            ImGui::NextColumn();
+            ImGui::Text("Value");
+            ImGui::NextColumn();
+            
+            for (auto& i : component.Attributes)
+            {
+                ImGui::PushID(index);
+                
+                //ImGui::SetColumnOffset()
+                int current_item = i.second.index();
+                std::string prev;
+                switch (current_item)
+                {
+                case 0:
+                    prev = "Int";
+                    break;
+                case 1:
+                    prev = "Float";
+                    break;
+                case 2:
+                    prev = "String";
+                    break;
+                }
+                
+                if (ImGui::BeginCombo("##Type", prev.c_str()))
+                {
+                    for (int j = 0; j < IM_ARRAYSIZE(types); j++)
+                    {
+                        bool selected = (current_item == types[j]);
+                        if (ImGui::Selectable(convertInt(types[j]).c_str(), selected))
+                        {
+                            current_item = types[j];
+                            if (current_item == 0)
+                            {
+                                component.ChangeAttributeType<int>(i.first);
+                            }
+                            else if (current_item == 1)
+                            {
+                                component.ChangeAttributeType<float>(i.first);
+                            }
+                            else if (current_item == 2)
+                            {
+                                component.ChangeAttributeType<std::string>(i.first);
+                            }
+                            
+                        }
+                        if (selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                
+                std::string name = i.first;
+
+                ImGui::NextColumn();
+                ImGui::SetNextItemWidth(tenth*4);
+                if (ImGui::InputText("##Name", &name, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    if (component.Attributes.count(name)==0)
+                    {
+                        auto NodeHandler = component.Attributes.extract(i.first);
+                        NodeHandler.key() = name;
+                        component.Attributes.insert(std::move(NodeHandler));
+                    }
+                }
+
+                ImGui::NextColumn();
+
+                if (i.second.index() == 0)
+                    
+                {
+                    int& val = std::get<int>(i.second);
+                    ImGui::DragInt("##Value", &val);
+                }
+                else if (i.second.index() == 1)
+                {
+                    float& val = std::get<float>(i.second);
+                    ImGui::DragFloat("##Value", &val);
+                }
+                else if (i.second.index() == 2)
+                {
+                    std::string& val = std::get<std::string>(i.second);
+                    ImGui::InputText("##Value", &val);
+                }
+                ImGui::NextColumn();
+                ImGui::PopID();
+                index++;
+            }
+            ImGui::EndColumns();
+            
+            
+        });
 
         DrawComponent<SpriteRendererComponent>("Sprite Renderer", actor, [](auto& component)
             {

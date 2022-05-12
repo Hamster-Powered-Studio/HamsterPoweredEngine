@@ -81,6 +81,7 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 			const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(actor);
 			sprite.Sprite.setPosition(transform.Transform.Pos);
 			sprite.Sprite.setRotation(transform.Transform.Rot);
+			sprite.Sprite.setScale(transform.Transform.Scale);
 			sprite.Sprite.setColor(sprite.Tint);
 
 			if (sprite.Visible)
@@ -101,13 +102,14 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 			if (Registry.any_of<SpriteRendererComponent>(actor))
 			{
 				auto& spr = Registry.get<SpriteRendererComponent>(actor);
-				collider.Collider.width = spr.Sprite.getTexture()->getSize().x;
-				collider.Collider.height = spr.Sprite.getTexture()->getSize().y;
+				collider.Collider.width = spr.Sprite.getTexture()->getSize().x * transform.Transform.Scale.x;
+				collider.Collider.height = spr.Sprite.getTexture()->getSize().y * transform.Transform.Scale.y;
 			}
 		}
 			
 		collider.Collider.left = transform.Transform.Pos.x - (collider.Collider.width/2);
 		collider.Collider.top = transform.Transform.Pos.y - (collider.Collider.height/2);
+		
 			
 		if (collider.Preview)
 		{
@@ -126,7 +128,8 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 		{
 			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
 			tm.map.setPosition(transform.Transform.Pos);
-
+			tm.map.setScale(transform.Transform.Scale);
+			tm.map.setRotation(transform.Transform.Rot);
 			if (tm.Visible)
 			{
 				RenderItem element{};
@@ -146,7 +149,7 @@ void Scene::OnUpdateEditor(float deltaTime, EditorCamera& camera)
 void Scene::OnUpdateRuntime(float deltaTime)
 {
 	std::priority_queue<RenderItem> RenderQueue;
-
+	
 	//Update Scripts
 	{
 		Registry.view<NativeScriptComponent>().each([=](auto actor, auto& nsc)
@@ -180,7 +183,35 @@ void Scene::OnUpdateRuntime(float deltaTime)
 	}
 	
 	UpdateRelationships();
-	
+
+	{
+		auto view = Registry.view<TagComponent, AttributesComponent, TransformComponent, CameraComponent>();
+		for (auto actor : view)
+		{
+			auto [tag, attributes, transform, camera] = view.get<TagComponent, AttributesComponent, TransformComponent, CameraComponent>(actor);
+			if (tag.Tag == "Player")
+			{
+				if (global::Game->DebugWindow)
+				{
+					ImGui::Begin("Debug Window");
+					ImGui::DragInt("Lives", &global::Game->GameState.Lives);
+					ImGui::Separator();
+					ImGui::DragFloat("X", &transform.Transform.Pos.x);
+					ImGui::DragFloat("Y", &transform.Transform.Pos.y);
+					ImGui::Separator();
+					ImGui::DragFloat("Gravity", &attributes.GetAttribute<float>("Gravity"));
+					ImGui::DragFloat("Speed", &attributes.GetAttribute<float>("Speed"));
+					ImGui::DragFloat("Jump Height", &attributes.GetAttribute<float>("JumpHeight"));
+					ImGui::DragFloat("Max Y Speed", &attributes.GetAttribute<float>("MaxYSpeed"));
+					ImGui::DragFloat("Kill Height", &attributes.GetAttribute<float>("KillHeight"));
+					ImGui::Separator();
+					ImGui::DragFloat("Camera Zoom", &camera.Zoom);
+					ImGui::End();
+					
+				}
+			}
+		}
+	}
 
 	{
 		auto view = Registry.view<BoxColliderComponent, TransformComponent, MoveComponent>();
@@ -193,8 +224,8 @@ void Scene::OnUpdateRuntime(float deltaTime)
 				if (Registry.any_of<SpriteRendererComponent>(actor))
 				{
 					auto& spr = Registry.get<SpriteRendererComponent>(actor);
-					collider.Collider.width = spr.Sprite.getTexture()->getSize().x;
-					collider.Collider.height = spr.Sprite.getTexture()->getSize().y;
+					collider.Collider.width = spr.Sprite.getTexture()->getSize().x * transform.Transform.Scale.x;
+					collider.Collider.height = spr.Sprite.getTexture()->getSize().y * transform.Transform.Scale.y;
 				}
 			}
 			
@@ -292,7 +323,7 @@ void Scene::OnUpdateRuntime(float deltaTime)
 		if (global::Game->editor)	
 			if (mainCamera->Camera.getSize() != sf::Vector2f(Renderer::GetView()->getSize().x, Renderer::GetView()->getSize().y))
 			{
-				mainCamera->Camera.setSize(Renderer::GetView()->getSize().x, Renderer::GetView()->getSize().y);
+				mainCamera->Camera.setSize(Renderer::GetView()->getSize().x * mainCamera->Zoom, Renderer::GetView()->getSize().y * mainCamera->Zoom);
 			}
 		
 		auto group = Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -301,6 +332,7 @@ void Scene::OnUpdateRuntime(float deltaTime)
 			const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(actor);
 			sprite.Sprite.setPosition(transform.Transform.Pos);
 			sprite.Sprite.setRotation(transform.Transform.Rot);
+			sprite.Sprite.setScale(transform.Transform.Scale);
 			sprite.Sprite.setColor(sprite.Tint);
 
 			if (sprite.Visible)
@@ -318,6 +350,8 @@ void Scene::OnUpdateRuntime(float deltaTime)
 		{
 			const auto& [tm, transform] = maps.get<TileMapComponent, TransformComponent>(actor);
 			tm.map.setPosition(transform.Transform.Pos);
+			tm.map.setScale(transform.Transform.Scale);
+			tm.map.setRotation(transform.Transform.Rot);
 			sf::Vector2f boundsSize((float)tm.width * (float)tm.tileWidth, (float)tm.height * (float)tm.tileHeight);
 			sf::Vector2f boundsPos(transform.Transform.Pos.x - (boundsSize.x / 2), transform.Transform.Pos.y - (boundsSize.y / 2));
 			sf::FloatRect bounds(boundsPos, boundsSize);
@@ -331,7 +365,7 @@ void Scene::OnUpdateRuntime(float deltaTime)
 				Renderer::RenderQueue.push(element);
 			}
 		}
-
+	mainCamera->Camera.setSize(Renderer::GetView()->getSize().x * mainCamera->Zoom, Renderer::GetView()->getSize().y * mainCamera->Zoom);
 	while (!Renderer::RenderQueue.empty())
 		{
 			Renderer::Draw(*Renderer::RenderQueue.top().elem, &mainCamera->Camera);
@@ -364,6 +398,32 @@ Actor Scene::CreateActorWithUUID(HPUUID uuid, const std::string& name)
 Actor Scene::DuplicateActor(Actor actor)
 {
 	return Actor();
+}
+
+Actor Scene::FindByName(std::string name)
+{
+	auto view = Registry.view<TagComponent>();
+	for (auto& i : view)
+	{
+		auto& tag = view.get<TagComponent>(i);
+		if(name == tag.Tag)
+		{
+			std::cout << "Found!";
+			return Actor(i, this);
+			
+		}
+	}
+	return {};
+}
+
+GameState& Scene::GetGameState()
+{
+	return global::Game->GameState;
+}
+
+void Scene::OpenLevel(std::string path)
+{
+	global::Game->OpenLevel(path);
 }
 
 void Scene::DestroyActor(Actor actor)
@@ -430,5 +490,10 @@ void Scene::OnComponentAdded<NativeScriptComponent>(Actor actor, NativeScriptCom
 
 template<>
 void Scene::OnComponentAdded<LuaScriptComponent>(Actor actor, LuaScriptComponent& component)
+{	
+}
+
+template<>
+void Scene::OnComponentAdded<AttributesComponent>(Actor actor, AttributesComponent& component)
 {	
 }

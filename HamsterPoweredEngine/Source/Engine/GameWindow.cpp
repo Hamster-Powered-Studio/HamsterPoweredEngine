@@ -12,7 +12,6 @@
 #include "Utils/PlatformUtils.h"
 #include "Engine/EditorLayer.h"
 #include "Scripts/CameraController.h"
-#include "Scripts/TileMapCollisionScript.h"
 #include "ScriptableLuaActor.h"
 
 
@@ -26,6 +25,11 @@ void some_function() {
 }
 
 
+void GameWindow::OpenLevel(std::string path)
+{
+    levelToOpen = path;
+}
+
 GameWindow::GameWindow()
 {
     
@@ -35,7 +39,7 @@ GameWindow::GameWindow()
     //Create the main instance window
     window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Hamster Powered Engine");
     //::ShowWindow(window->getSystemHandle(), SW_MAXIMIZE);
-    window->setVerticalSyncEnabled(true);
+    window->setFramerateLimit(60);
     auto image = sf::Image{};
     if (image.loadFromFile("resources/icon.png"))
     {
@@ -50,13 +54,13 @@ GameWindow::GameWindow()
     
     Renderer::GetInstance();
     //Renderer::Resize(window->getSize().x, window->getSize().y);
-
+    
     
     NewEmptyScene();
     if (!EDITOR)
     {
         SceneSerializer serializer(*currentScene);
-        serializer.Deserialize("assets/scenes/ForestWithScript.hpl");
+        serializer.Deserialize("assets/scenes/Menu.hpl");
         ResizeGameView();
     }
     
@@ -92,6 +96,13 @@ void GameWindow::WindowLoop()
                 if(!EDITOR)
                     ResizeGameView();
             }
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Key::Tab)
+                {
+                    DebugWindow = !DebugWindow;
+                }
+            }
         }
         global::deltaTime = global::deltaClock.getElapsedTime().asSeconds();
         
@@ -114,9 +125,12 @@ void GameWindow::WindowLoop()
             Renderer::EndDraw();
         }
 
-
         sf::Sprite output;
         output.setTexture(Renderer::GetView()->getTexture(), true);
+        
+       
+        
+        
         //output.setOrigin(output.getTexture()->getSize().x / 2, output.getTexture()->getSize().y / 2);
 
         if (!EDITOR)
@@ -124,17 +138,39 @@ void GameWindow::WindowLoop()
             window->setView(sf::View((sf::FloatRect)output.getTextureRect()));
             window->draw(output);
         }
-            
-        else
+
+        sf::Texture heart;
+        heart.loadFromFile("assets/sprites/heart.png");
+        sf::Vector2i root = window->getPosition();
+        for (int i = 0; i < GameState.Lives; i++)
         {
-            ImGui::SFML::Render(*window);
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
+            sf::Sprite spr = sf::Sprite(heart);
+            spr.setPosition(Renderer::GetView()->getSize().x / 2 + i*20 - 29, Renderer::GetView()->getSize().y / 2 - 50);
+            window->draw(spr);
+        }
+
+        if (GameState.Lives <= 0)
+        {
+            levelToOpen = "assets/scenes/Menu.hpl";
+            GameState.Lives = 3;
         }
         
+        if (levelToOpen != "")
+        {
+            NewEmptyScene();
+            SceneSerializer serializer(*currentScene);
+            serializer.Deserialize(levelToOpen);
+            levelToOpen = "";
+        }
+
+        
+        ImGui::SFML::Render(*window);
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
 
         window->display();
 
+        
     }
 }
 
@@ -179,17 +215,17 @@ void GameWindow::NewEmptyScene()
 {
     delete currentScene;
     currentScene = new Scene();
-    Actor Cam = currentScene->CreateActor("Camera");
-    for (int i = 0; i < 10; i++)
-        currentScene->CreateActor("Lua").AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
+    //Actor Cam = currentScene->CreateActor("Camera");
     
-    Cam.AddComponent<CameraComponent>().SetPrimary(false);
+    //Cam.AddComponent<CameraComponent>().SetPrimary(false);
     
-    Cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-    Cam.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
+    //Cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+    //Cam.AddComponent<LuaScriptComponent>().Bind<ScriptableLuaActor>();
     if (editor && editor->hier)
     { 
         editor->hier->SetContext(*currentScene);
     }
+    //currentScene->mainCamera = &Cam.GetComponent<CameraComponent>();
+    //ResizeGameView();
 }
 
