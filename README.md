@@ -3,7 +3,7 @@
 
 ## A small, SFML powered game toolkit with primitive Lua scripting
 This was just supposed to be a tilemap editor, but then science went too far.
-
+Created during the first year of my degree.
 
 ## Configurations
 Compile with at least Visual Studio 2019
